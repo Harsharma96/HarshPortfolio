@@ -13,7 +13,7 @@ interface AvatarCard3DProps {
   currentColor?: { ping: string; solid: string };
 }
 
-// Only the 4 floating tech badge pills on the left have subtle hover interaction
+// Only the 4 floating tech badge pills on the left have subtle hover/touch interaction
 const TECH_BADGES = [
   {
     id: "csharp",
@@ -76,7 +76,7 @@ export function AvatarCard3D({
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const slowSpringConfig = { damping: 38, stiffness: 80, mass: 0.9 };
+  const slowSpringConfig = { damping: 38, stiffness: 85, mass: 0.9 };
   const smoothMouseX = useSpring(mouseX, slowSpringConfig);
   const smoothMouseY = useSpring(mouseY, slowSpringConfig);
 
@@ -92,13 +92,33 @@ export function AvatarCard3D({
   const glareX = useTransform(smoothMouseX, [-1, 1], [20, 80]);
   const glareY = useTransform(smoothMouseY, [-1, 1], [20, 80]);
 
+  // Mouse Move Handler
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
     const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
-    mouseX.set(x);
-    mouseY.set(y);
+    mouseX.set(Math.max(-1, Math.min(1, x)));
+    mouseY.set(Math.max(-1, Math.min(1, y)));
+  };
+
+  // Mobile Touch Handlers (Full 3D interactive gesture support on touch devices)
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!containerRef.current || e.touches.length === 0) return;
+    const touch = e.touches[0];
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = ((touch.clientX - rect.left) / rect.width - 0.5) * 2;
+    const y = ((touch.clientY - rect.top) / rect.height - 0.5) * 2;
+    mouseX.set(Math.max(-1, Math.min(1, x)));
+    mouseY.set(Math.max(-1, Math.min(1, y)));
+    setIsHovered(true);
+  };
+
+  const handleTouchEnd = () => {
+    setIsHovered(false);
+    mouseX.set(0);
+    mouseY.set(0);
+    setHoveredBadge(null);
   };
 
   const handleMouseEnter = () => {
@@ -115,11 +135,14 @@ export function AvatarCard3D({
   return (
     <div
       ref={containerRef}
-      className="group relative h-full w-full min-h-[460px] sm:min-h-[520px] lg:min-h-full rounded-[28px] p-1.5 transition-all duration-500 select-none cursor-pointer"
+      className="group relative h-full w-full max-w-[380px] sm:max-w-none mx-auto min-h-[360px] sm:min-h-[500px] lg:min-h-full rounded-[28px] p-1.5 transition-all duration-500 select-none cursor-pointer"
       style={{ perspective: 1200 }}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onTouchStart={handleTouchMove}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       {/* Subtle Slow Rotating Silver/White Border Beam (Clean Minimalist Monochrome) */}
       <div className="pointer-events-none absolute -inset-[1px] rounded-[30px] overflow-hidden">
@@ -143,12 +166,13 @@ export function AvatarCard3D({
         animate={
           !isHovered
             ? {
-                y: [0, -4, 0],
+                y: [0, -5, 0],
+                rotateZ: [-0.3, 0.3, -0.3],
               }
-            : { y: 0 }
+            : { y: 0, rotateZ: 0 }
         }
         transition={{
-          duration: 8, // Calm, slow 8-second breathing animation
+          duration: 6, // Calm, hypnotic breathing 3D float
           repeat: Infinity,
           ease: "easeInOut",
         }}
@@ -163,7 +187,7 @@ export function AvatarCard3D({
         />
 
         {/* ========================================================== */}
-        {/* MAIN ARTWORK: High-Res 3D Character (No Overlays on Laptop)*/}
+        {/* MAIN ARTWORK: High-Res 3D Character                        */}
         {/* ========================================================== */}
         <div
           className="relative w-full h-full flex items-center justify-center overflow-hidden"
@@ -177,7 +201,7 @@ export function AvatarCard3D({
               transform: "translateZ(20px)",
             }}
           >
-            {/* Clean, Pristine 3D Character Artwork - Nothing covering laptop, hands, or desk */}
+            {/* Clean, Pristine 3D Character Artwork */}
             <img
               src={activeImage}
               alt="Harsh - 3D Developer"
@@ -187,7 +211,7 @@ export function AvatarCard3D({
             />
 
             {/* ======================================================== */}
-            {/* SUBTLE HOVER GLOW ONLY FOR THE 4 TECH BADGES (NO BLUR)    */}
+            {/* SUBTLE HOVER/TAP GLOW ONLY FOR THE 4 TECH BADGES         */}
             {/* ======================================================== */}
             {TECH_BADGES.map((badge) => {
               const isCurrentHovered = hoveredBadge === badge.id;
@@ -197,10 +221,10 @@ export function AvatarCard3D({
                   key={badge.id}
                   onMouseEnter={() => setHoveredBadge(badge.id)}
                   onMouseLeave={() => setHoveredBadge(null)}
-                  whileHover={{
-                    scale: 1.05,
-                    y: -2,
-                  }}
+                  onTouchStart={() => setHoveredBadge(badge.id)}
+                  onTouchEnd={() => setTimeout(() => setHoveredBadge(null), 1000)}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.94 }}
                   transition={{
                     type: "spring",
                     stiffness: 280,
@@ -215,16 +239,16 @@ export function AvatarCard3D({
                     transform: "translateZ(35px)",
                   }}
                 >
-                  {/* Gentle outer silver glow - No blurred rectangle covering the badge */}
+                  {/* Gentle outer silver glow on hover/tap */}
                   {isCurrentHovered && (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      transition={{ duration: 0.5, ease: "easeOut" }}
+                      transition={{ duration: 0.4, ease: "easeOut" }}
                       className={`absolute -inset-1 ${badge.rounded} pointer-events-none rounded-2xl`}
                       style={{
-                        boxShadow: "0 0 16px rgba(255, 255, 255, 0.28)",
+                        boxShadow: "0 0 16px rgba(255, 255, 255, 0.35)",
                       }}
                     />
                   )}
@@ -234,7 +258,7 @@ export function AvatarCard3D({
           </motion.div>
         </div>
 
-        {/* Dynamic Specular Silver Glare Sheen Tracking Mouse */}
+        {/* Dynamic Specular Silver Glare Sheen Tracking Mouse / Touch */}
         <motion.div
           className="pointer-events-none absolute inset-0 mix-blend-screen opacity-15 group-hover:opacity-30 transition-opacity duration-800 ease-out"
           style={{

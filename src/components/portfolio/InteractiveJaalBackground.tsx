@@ -159,9 +159,25 @@ export function InteractiveJaalBackground() {
       initGrid();
     };
 
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length === 0) return;
+      const touch = e.touches[0];
+      const rect = canvas.getBoundingClientRect();
+      mouse.targetX = touch.clientX - rect.left;
+      mouse.targetY = touch.clientY - rect.top;
+      mouse.active = true;
+    };
+
+    const handleTouchEnd = () => {
+      mouse.active = false;
+    };
+
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
     window.addEventListener("pointerleave", handlePointerLeave, { passive: true });
     window.addEventListener("pointerdown", handlePointerDown, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+    window.addEventListener("touchstart", handleTouchMove, { passive: true });
+    window.addEventListener("touchend", handleTouchEnd, { passive: true });
     window.addEventListener("resize", handleResize);
 
     // Animation & Physics Loop
@@ -405,6 +421,9 @@ export function InteractiveJaalBackground() {
       window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("pointerleave", handlePointerLeave);
       window.removeEventListener("pointerdown", handlePointerDown);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchstart", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
       window.removeEventListener("resize", handleResize);
     };
   }, []);

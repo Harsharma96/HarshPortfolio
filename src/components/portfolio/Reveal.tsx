@@ -22,7 +22,7 @@ export function Reveal({
       className={className}
       initial={{ opacity: 0, y, scale }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, margin: "-60px" }}
+      viewport={{ once: true, margin: "-15px" }}
       transition={{ duration: 0.85, delay, ease: [0.22, 1, 0.36, 1] }}
     >
       {children}
@@ -56,6 +56,7 @@ export function Card({
         setIsHovered(false);
         setIsClicked(false);
       }}
+      whileTap={{ scale: 0.985 }}
       whileHover={
         hover
           ? {
