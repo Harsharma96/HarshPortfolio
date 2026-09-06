@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev -p 8080",
+    "tunnel": "npx localtunnel --port 8080",
     "build": "next build",
     "start": "next start -p 8080",
     "lint": "eslint ."
