@@ -60,7 +60,7 @@ export function Certification() {
                 <h3 className="font-[family-name:var(--font-display)] text-sm xs:text-base sm:text-lg xl:text-xl font-bold uppercase leading-tight tracking-tight transition-transform duration-300 group-hover:translate-x-1">
                   {certification.certTitle}
                 </h3>
-                <p className="mt-0.5 sm:mt-1 truncate text-[10px] sm:text-xs xl:text-sm uppercase tracking-[0.16em] sm:tracking-[0.18em] text-muted-foreground font-medium">
+                <p className="mt-0.5 sm:mt-1 text-[10px] sm:text-xs xl:text-sm uppercase tracking-[0.14em] sm:tracking-[0.18em] text-muted-foreground font-medium">
                   {certification.meta}
                 </p>
               </div>
