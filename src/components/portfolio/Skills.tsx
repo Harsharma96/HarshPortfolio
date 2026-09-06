@@ -15,7 +15,7 @@ export function Skills() {
         <Card className="p-4 sm:p-8 xl:p-12 rounded-2xl sm:rounded-3xl">
           <SectionHeading kicker={skills.kicker}>{skills.heading}</SectionHeading>
 
-          <div className="mt-5 sm:mt-8 grid gap-2.5 sm:gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          <div className="mt-4 sm:mt-8 grid gap-2 sm:gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {skills.groups.map((g, i) => {
               const IconComponent = resolveIcon(g.iconName);
               const isLast = i === skills.groups.length - 1 && skills.groups.length % 2 !== 0;
@@ -24,38 +24,57 @@ export function Skills() {
                 <Reveal key={g.title} delay={i * 0.08} className={isLast ? "sm:col-span-2 lg:col-span-1" : ""}>
                   <Card
                     hover
-                    className="group relative flex h-full flex-col justify-start overflow-hidden border-border bg-secondary/50 p-3.5 sm:p-5 rounded-xl sm:rounded-2xl cursor-default transition-all duration-300 hover:border-primary/50 hover:shadow-[var(--shadow-lift)]"
+                    className="group relative flex h-full flex-col justify-start overflow-hidden border-border bg-secondary/50 p-2.5 xs:p-3 sm:p-5 rounded-xl sm:rounded-2xl cursor-default transition-all duration-300 hover:border-primary/50 hover:shadow-[var(--shadow-lift)]"
                   >
-                    <div className="flex items-center gap-2.5 sm:gap-3">
-                      <motion.span
-                        animate={{
-                          y: [0, -3.5, 0],
-                          rotate: [0, 3, -3, 0],
-                        }}
-                        transition={{
-                          duration: 3.5 + i * 0.6,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                          delay: i * 0.2,
-                        }}
-                        className="grid h-8 w-8 sm:h-10 sm:w-10 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground shadow-sm transition-all duration-300 group-hover:rotate-12 group-hover:scale-115 group-hover:shadow-md"
-                      >
-                        <IconComponent className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden />
-                      </motion.span>
-                      <h3 className="font-[family-name:var(--font-display)] text-xs sm:text-sm font-bold uppercase tracking-tight transition-transform duration-300 group-hover:translate-x-1 text-foreground">
-                        {g.title}
-                      </h3>
+                    <div className="flex items-center justify-between sm:justify-start gap-2 sm:gap-3">
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <motion.span
+                          animate={{
+                            y: [0, -3.5, 0],
+                            rotate: [0, 3, -3, 0],
+                          }}
+                          transition={{
+                            duration: 3.5 + i * 0.6,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                            delay: i * 0.2,
+                          }}
+                          className="grid h-7 w-7 sm:h-10 sm:w-10 shrink-0 place-items-center rounded-lg sm:rounded-xl bg-primary text-primary-foreground shadow-xs transition-all duration-300 group-hover:rotate-12 group-hover:scale-115"
+                        >
+                          <IconComponent className="h-3.5 w-3.5 sm:h-5 sm:w-5" aria-hidden />
+                        </motion.span>
+                        <h3 className="font-[family-name:var(--font-display)] text-xs sm:text-sm font-bold uppercase tracking-tight transition-transform duration-300 group-hover:translate-x-1 text-foreground">
+                          {g.title}
+                        </h3>
+                      </div>
+                      <span className="text-[10px] font-mono text-muted-foreground/80 sm:hidden">
+                        {g.items.length} skills
+                      </span>
                     </div>
 
-                    <ul className="mt-2.5 sm:mt-4 space-y-1 sm:space-y-1.5 border-t border-border/60 pt-2 sm:pt-3">
+                    {/* Mobile: Sleek, compact badge chips (zero truncation, compact height) */}
+                    <div className="mt-2 flex flex-wrap gap-1.5 border-t border-border/50 pt-2 sm:hidden">
+                      {g.items.map((it) => (
+                        <span
+                          key={it}
+                          className="inline-flex items-center gap-1 rounded-md border border-border/70 bg-card/80 px-2 py-0.5 text-[11px] font-medium text-foreground transition-colors hover:border-primary/50"
+                        >
+                          <span className="text-primary font-bold text-[10px]">↳</span>
+                          <span className="break-words">{it}</span>
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Desktop: Vertical list */}
+                    <ul className="hidden sm:block mt-3.5 space-y-1.5 border-t border-border/60 pt-3">
                       {g.items.map((it) => (
                         <li
                           key={it}
-                          className="flex items-center gap-2 rounded-lg sm:rounded-xl px-2 sm:px-2.5 py-1 sm:py-1.5 text-xs sm:text-xs xl:text-sm font-medium text-muted-foreground transition-all duration-300 hover:bg-card/80 hover:text-foreground hover:border hover:border-border/60 cursor-default"
+                          className="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs xl:text-sm font-medium text-muted-foreground transition-all duration-300 hover:bg-card/80 hover:text-foreground hover:border hover:border-border/60 cursor-default"
                         >
                           <span
                             aria-hidden
-                            className="inline-block text-[11px] sm:text-xs text-primary font-bold transition-transform duration-300 group-hover:translate-x-1 shrink-0"
+                            className="inline-block text-xs text-primary font-bold transition-transform duration-300 group-hover:translate-x-1 shrink-0"
                           >
                             ↳
                           </span>
