@@ -12,6 +12,7 @@ interface PortfolioContextType {
   updateAbout: (aboutData: Partial<PortfolioData["about"]>) => void;
   updateSkills: (skillsData: Partial<PortfolioData["skills"]>) => void;
   updateProject: (projectData: Partial<PortfolioData["project"]>) => void;
+  updateActivity: (activityData: Partial<PortfolioData["activity"]>) => void;
   updateCertification: (certData: Partial<PortfolioData["certification"]>) => void;
   updateContact: (contactData: Partial<PortfolioData["contact"]>) => void;
   updateAll: (newData: PortfolioData) => void;
@@ -55,6 +56,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
           about: { ...defaultPortfolioData.about, ...parsed.about },
           skills: { ...defaultPortfolioData.skills, ...parsed.skills },
           project: { ...defaultPortfolioData.project, ...parsed.project },
+          activity: { ...defaultPortfolioData.activity, ...(parsed.activity || {}) },
           certification: { ...defaultPortfolioData.certification, ...parsed.certification },
           contact: {
             ...defaultPortfolioData.contact,
@@ -120,6 +122,13 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const updateActivity = (activityData: Partial<PortfolioData["activity"]>) => {
+    persistAndBroadcast({
+      ...data,
+      activity: { ...data.activity, ...activityData },
+    });
+  };
+
   const updateCertification = (certData: Partial<PortfolioData["certification"]>) => {
     persistAndBroadcast({
       ...data,
@@ -176,6 +185,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
         updateAbout,
         updateSkills,
         updateProject,
+        updateActivity,
         updateCertification,
         updateContact,
         updateAll,

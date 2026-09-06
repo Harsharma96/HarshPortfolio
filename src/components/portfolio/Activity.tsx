@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Activity as ActivityIcon, Code2, Flame } from "lucide-react";
 import { Card, Reveal, SectionHeading } from "./Reveal";
+import { usePortfolio } from "@/context/PortfolioContext";
 
 interface LeetCodeStats {
   username: string;
@@ -43,8 +44,16 @@ function LeetCodeIcon({ className = "h-5 w-5" }: { className?: string }) {
 }
 
 export function Activity() {
+  const { data } = usePortfolio();
+  const activityConfig = data.activity || {
+    kicker: "SYSTEM ACTIVITY",
+    heading: "Code Frequency & Problem Solving",
+    leetcodeUsername: "Harsh200509",
+    githubUsername: "Harsharma96",
+  };
+
   const [leetcode, setLeetcode] = useState<LeetCodeStats>({
-    username: "Harsh200509",
+    username: activityConfig.leetcodeUsername || "Harsh200509",
     ranking: 5000001,
     totalSolved: 11,
     totalQuestions: 4046,
@@ -67,7 +76,7 @@ export function Activity() {
   });
 
   const [github, setGithub] = useState<GitHubStats>({
-    username: "Harsharma96",
+    username: activityConfig.githubUsername || "Harsharma96",
     totalContributions: 116,
     contributions: [],
   });
@@ -75,16 +84,19 @@ export function Activity() {
   const [hoveredDay, setHoveredDay] = useState<{ date: string; count: number } | null>(null);
 
   useEffect(() => {
-    fetch("/api/activity")
+    const leetUser = activityConfig.leetcodeUsername || "Harsh200509";
+    const gitUser = activityConfig.githubUsername || "Harsharma96";
+
+    fetch(`/api/activity?leetcode=${encodeURIComponent(leetUser)}&github=${encodeURIComponent(gitUser)}`)
       .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          if (data.leetcode) setLeetcode(data.leetcode);
-          if (data.github) setGithub(data.github);
+      .then((resData) => {
+        if (resData.success) {
+          if (resData.leetcode) setLeetcode(resData.leetcode);
+          if (resData.github) setGithub(resData.github);
         }
       })
       .catch((err) => console.warn("Activity live fetch error:", err));
-  }, []);
+  }, [activityConfig.leetcodeUsername, activityConfig.githubUsername]);
 
   // Format 52 weeks matrix for GitHub
   const weeks = useMemo(() => {
@@ -134,11 +146,11 @@ export function Activity() {
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
             </div>
             <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
-              SYSTEM ACTIVITY
+              {activityConfig.kicker}
             </span>
           </div>
           <h2 className="font-[family-name:var(--font-display)] text-2xl sm:text-4xl lg:text-5xl font-bold uppercase leading-[1.02] tracking-tight">
-            Code Frequency &amp; Problem Solving
+            {activityConfig.heading}
           </h2>
         </div>
       </Reveal>

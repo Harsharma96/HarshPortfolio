@@ -59,6 +59,12 @@ export interface PortfolioData {
     accordionTitle: string;
     steps: RoadmapStep[];
   };
+  activity: {
+    kicker: string;
+    heading: string;
+    leetcodeUsername: string;
+    githubUsername: string;
+  };
   certification: {
     kicker: string;
     heading: string;
@@ -82,6 +88,7 @@ export interface PortfolioData {
       instagram: string;
       twitter: string;
       peerlist: string;
+      leetcode?: string;
     };
   };
 }
@@ -151,6 +158,12 @@ export const defaultPortfolioData: PortfolioData = {
       { n: "04", title: "Database", text: "MySQL used for data storage and management." },
       { n: "05", title: "UX", text: "Focused on responsiveness, performance and user engagement." },
     ],
+  },
+  activity: {
+    kicker: "SYSTEM ACTIVITY",
+    heading: "Code Frequency & Problem Solving",
+    leetcodeUsername: "Harsh200509",
+    githubUsername: "Harsharma96",
   },
   certification: {
     kicker: "04 — Credentials",

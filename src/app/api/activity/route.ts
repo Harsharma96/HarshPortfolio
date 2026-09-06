@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 
-export const revalidate = 3600; // Cache for 1 hour
+export const revalidate = 3600; // Default cache for 1 hour
 
-// Fallback verified data in case upstream APIs rate-limit or time out
 const DEFAULT_LEETCODE = {
   username: "Harsh200509",
   ranking: 5000001,
@@ -26,25 +25,32 @@ const DEFAULT_LEETCODE = {
   },
 };
 
-export async function GET() {
-  let leetcodeData = DEFAULT_LEETCODE;
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const leetcodeUser = searchParams.get("leetcode")?.trim() || "Harsh200509";
+  const githubUser = searchParams.get("github")?.trim() || "Harsharma96";
+  const forceRefresh = searchParams.get("refresh") === "true";
+
+  let leetcodeData = { ...DEFAULT_LEETCODE, username: leetcodeUser };
   let githubContributions: Array<{ date: string; count: number; level: number }> = [];
   let totalContributions = 116;
+  let leetcodeStatus = "connected";
+  let githubStatus = "connected";
 
   // 1. Fetch LeetCode Data
   try {
     const leetcodeRes = await fetch(
-      "https://alfa-leetcode-api.onrender.com/userProfile/Harsh200509",
+      `https://alfa-leetcode-api.onrender.com/userProfile/${encodeURIComponent(leetcodeUser)}`,
       {
-        next: { revalidate: 3600 },
-        signal: AbortSignal.timeout(4000),
+        next: forceRefresh ? { revalidate: 0 } : { revalidate: 3600 },
+        signal: AbortSignal.timeout(5000),
       }
     );
     if (leetcodeRes.ok) {
       const data = await leetcodeRes.json();
       if (data && typeof data.totalSolved === "number") {
         leetcodeData = {
-          username: "Harsh200509",
+          username: leetcodeUser,
           ranking: data.ranking || DEFAULT_LEETCODE.ranking,
           totalSolved: data.totalSolved,
           totalQuestions: data.totalQuestions || 4046,
@@ -56,30 +62,42 @@ export async function GET() {
           totalHard: data.totalHard ?? 972,
           submissionCalendar: data.submissionCalendar || DEFAULT_LEETCODE.submissionCalendar,
         };
+      } else {
+        leetcodeStatus = "fallback_used";
       }
+    } else {
+      leetcodeStatus = "fallback_used";
     }
   } catch (err) {
-    console.warn("LeetCode fetch fallback used:", err);
+    leetcodeStatus = "fallback_used";
+    console.warn(`LeetCode fetch fallback used for ${leetcodeUser}:`, err);
   }
 
   // 2. Fetch GitHub Contributions Data
   try {
     const githubRes = await fetch(
-      "https://github-contributions-api.jogruber.de/v4/Harsharma96?y=last",
+      `https://github-contributions-api.jogruber.de/v4/${encodeURIComponent(githubUser)}?y=last`,
       {
-        next: { revalidate: 3600 },
-        signal: AbortSignal.timeout(4000),
+        next: forceRefresh ? { revalidate: 0 } : { revalidate: 3600 },
+        signal: AbortSignal.timeout(5000),
       }
     );
     if (githubRes.ok) {
       const gData = await githubRes.json();
       if (gData && Array.isArray(gData.contributions)) {
         githubContributions = gData.contributions;
-        totalContributions = gData.total?.lastYear || gData.contributions.reduce((acc: number, c: any) => acc + (c.count || 0), 0);
+        totalContributions =
+          gData.total?.lastYear ||
+          gData.contributions.reduce((acc: number, c: any) => acc + (c.count || 0), 0);
+      } else {
+        githubStatus = "fallback_used";
       }
+    } else {
+      githubStatus = "fallback_used";
     }
   } catch (err) {
-    console.warn("GitHub contributions fetch fallback used:", err);
+    githubStatus = "fallback_used";
+    console.warn(`GitHub contributions fetch fallback used for ${githubUser}:`, err);
   }
 
   // If github fetch failed or empty, generate a realistic 365-day grid
@@ -103,10 +121,14 @@ export async function GET() {
     success: true,
     leetcode: leetcodeData,
     github: {
-      username: "Harsharma96",
+      username: githubUser,
       totalContributions,
       contributions: githubContributions,
     },
-    updatedAt: new Date().toISOString(),
+    meta: {
+      leetcodeStatus,
+      githubStatus,
+      lastSynced: new Date().toISOString(),
+    },
   });
 }

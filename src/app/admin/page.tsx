@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -25,13 +25,17 @@ import {
   Loader2,
   Eye,
   Layers,
+  Activity as ActivityIcon,
+  RefreshCw,
+  Github,
 } from "lucide-react";
 import { usePortfolio } from "@/context/PortfolioContext";
 import type { PortfolioData } from "@/data/portfolioDefaults";
 import { autoCutImage } from "@/utils/autoCutout";
 import { AvatarCard3D } from "@/components/portfolio/AvatarCard3D";
+import { Activity } from "@/components/portfolio/Activity";
 
-type TabKey = "hero" | "about" | "skills" | "project" | "certification" | "contact";
+type TabKey = "hero" | "about" | "skills" | "project" | "activity" | "certification" | "contact";
 
 export default function AdminDashboard() {
   const { data, updateAll, resetToDefaults, exportJSON, importJSON } = usePortfolio();
@@ -43,6 +47,40 @@ export default function AdminDashboard() {
     percent: 0,
     message: "",
   });
+  const [activityPreview, setActivityPreview] = useState<any>(null);
+  const [isSyncingActivity, setIsSyncingActivity] = useState(false);
+
+  const fetchLiveActivity = async (leetUser?: string, gitUser?: string, refresh = false) => {
+    setIsSyncingActivity(true);
+    try {
+      const lu = leetUser || formData.activity?.leetcodeUsername || "Harsh200509";
+      const gu = gitUser || formData.activity?.githubUsername || "Harsharma96";
+      const res = await fetch(
+        `/api/activity?leetcode=${encodeURIComponent(lu)}&github=${encodeURIComponent(gu)}${
+          refresh ? "&refresh=true" : ""
+        }`
+      );
+      const d = await res.json();
+      if (d.success) {
+        setActivityPreview(d);
+        if (refresh) {
+          toast.success(
+            `Live Connected! LeetCode (${d.leetcode.totalSolved} solved) & GitHub (${d.github.totalContributions} commits).`
+          );
+        }
+      }
+    } catch (err) {
+      toast.error("Failed to fetch live activity. Using cached fallback.");
+    } finally {
+      setIsSyncingActivity(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "activity" && !activityPreview) {
+      fetchLiveActivity();
+    }
+  }, [activeTab]);
 
   const handleAvatarAutoCut = async (fileOrUrl: File | string) => {
     setIsCutting(true);
@@ -128,6 +166,7 @@ export default function AdminDashboard() {
     { id: "about", label: "About", icon: User },
     { id: "skills", label: "Skills", icon: Wrench },
     { id: "project", label: "Projects", icon: FolderGit2 },
+    { id: "activity", label: "Activity & LeetCode", icon: ActivityIcon },
     { id: "certification", label: "Credentials", icon: Award },
     { id: "contact", label: "Contact & Socials", icon: Send },
   ];
@@ -1166,6 +1205,272 @@ export default function AdminDashboard() {
                         </div>
                       ))}
                     </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === "activity" && (
+              <motion.div
+                key="activity"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="space-y-6"
+              >
+                {/* Main Settings Card */}
+                <div className="rounded-3xl border border-border bg-card p-6 sm:p-8 shadow-sm">
+                  <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-5">
+                    <div>
+                      <h2 className="font-[family-name:var(--font-display)] text-xl font-bold uppercase tracking-tight flex items-center gap-2.5">
+                        <ActivityIcon className="h-5 w-5 text-emerald-500" />
+                        <span>LeetCode &amp; GitHub Live Activity</span>
+                      </h2>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Connect live developer accounts to stream real-time problem solving and commit activity.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        fetchLiveActivity(
+                          formData.activity?.leetcodeUsername,
+                          formData.activity?.githubUsername,
+                          true
+                        )
+                      }
+                      disabled={isSyncingActivity}
+                      className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/80 px-4 py-2 text-xs font-bold uppercase tracking-wider text-foreground hover:bg-secondary transition-all cursor-pointer shadow-xs"
+                    >
+                      <RefreshCw
+                        className={`h-3.5 w-3.5 ${isSyncingActivity ? "animate-spin text-emerald-500" : ""}`}
+                      />
+                      <span>{isSyncingActivity ? "Fetching Live APIs..." : "Test & Sync Live Data"}</span>
+                    </button>
+                  </div>
+
+                  {/* Account Connection Cards */}
+                  <div className="mt-6 grid gap-6 md:grid-cols-2">
+                    {/* LeetCode Connection Box */}
+                    <div className="rounded-2xl border border-border/90 bg-secondary/20 p-5">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <div className="grid h-9 w-9 place-items-center rounded-xl bg-[#FFA116]/15 text-[#FFA116]">
+                            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                              <path
+                                d="M13.483 0a1.374 1.374 0 0 0-.961.438L7.116 6.226l-3.854 4.126a5.266 5.266 0 0 0-1.209 2.104 5.35 5.35 0 0 0-.125.513 5.527 5.527 0 0 0 .062 2.362 5.83 5.83 0 0 0 .349 1.017 5.938 5.938 0 0 0 1.271 1.818l4.277 4.193.039.038c2.248 2.165 5.852 2.133 8.063-.074l2.396-2.392c.54-.54.54-1.414.003-1.955a1.378 1.378 0 0 0-1.951-.003l-2.396 2.392a3.021 3.021 0 0 1-4.205.038l-.02-.019-4.276-4.193c-.652-.64-.972-1.469-.948-2.263a2.68 2.68 0 0 1 .066-.523 2.545 2.545 0 0 1 .619-1.164L9.13 8.114c1.058-1.134 3.204-1.27 4.43-.278l3.501 2.831c.593.48 1.461.387 1.94-.207a1.384 1.384 0 0 0-.207-1.943l-3.5-2.831c-.8-.647-1.766-1.045-2.774-1.202l2.015-2.158A1.384 1.384 0 0 0 13.483 0zm-2.866 12.815a1.38 1.38 0 0 0-1.38 1.382 1.38 1.38 0 0 0 1.38 1.382H20.79a1.38 1.38 0 0 0 1.38-1.382 1.38 1.38 0 0 0-1.38-1.382z"
+                                fill="#FFA116"
+                              />
+                            </svg>
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-bold text-foreground">LeetCode Connection</h3>
+                            <span className="text-[10px] text-muted-foreground">Algorithm &amp; Problem Solving</span>
+                          </div>
+                        </div>
+
+                        <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-500">
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                          Live Connected
+                        </span>
+                      </div>
+
+                      <div className="mt-4">
+                        <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                          LeetCode Username
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.activity?.leetcodeUsername || ""}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              activity: {
+                                ...formData.activity,
+                                leetcodeUsername: e.target.value,
+                              },
+                            })
+                          }
+                          placeholder="e.g. Harsh200509"
+                          className="mt-1.5 w-full rounded-xl border border-border bg-secondary/50 px-3.5 py-2.5 font-mono text-sm font-medium outline-none focus:border-foreground"
+                        />
+                        <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+                          <a
+                            href={`https://leetcode.com/u/${formData.activity?.leetcodeUsername || "Harsh200509"}/`}
+                            target="_blank"
+                            rel="noreferrer noopener"
+                            className="inline-flex items-center gap-1 text-[#FFA116] hover:underline"
+                          >
+                            <span>Open LeetCode Profile</span>
+                            <ExternalLink className="h-3 w-3" />
+                          </a>
+                          <span className="font-mono text-[10px]">API: Alfa GraphQL Proxy</span>
+                        </div>
+                      </div>
+
+                      {/* Live Stats Preview Pill Grid */}
+                      <div className="mt-4 grid grid-cols-4 gap-2 border-t border-border/60 pt-3.5 text-center">
+                        <div className="rounded-xl border border-border/80 bg-card p-2">
+                          <span className="block font-mono text-xs font-black text-foreground">
+                            {activityPreview?.leetcode?.totalSolved ?? 11}
+                          </span>
+                          <span className="block text-[9px] font-mono text-muted-foreground uppercase">Solved</span>
+                        </div>
+                        <div className="rounded-xl border border-border/80 bg-card p-2">
+                          <span className="block font-mono text-xs font-black text-emerald-500">
+                            {activityPreview?.leetcode?.easySolved ?? 5}
+                          </span>
+                          <span className="block text-[9px] font-mono text-muted-foreground uppercase">Easy</span>
+                        </div>
+                        <div className="rounded-xl border border-border/80 bg-card p-2">
+                          <span className="block font-mono text-xs font-black text-amber-500">
+                            {activityPreview?.leetcode?.mediumSolved ?? 6}
+                          </span>
+                          <span className="block text-[9px] font-mono text-muted-foreground uppercase">Med</span>
+                        </div>
+                        <div className="rounded-xl border border-border/80 bg-card p-2">
+                          <span className="block font-mono text-xs font-black text-rose-500">
+                            {activityPreview?.leetcode?.hardSolved ?? 0}
+                          </span>
+                          <span className="block text-[9px] font-mono text-muted-foreground uppercase">Hard</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* GitHub Connection Box */}
+                    <div className="rounded-2xl border border-border/90 bg-secondary/20 p-5">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <div className="grid h-9 w-9 place-items-center rounded-xl bg-foreground/10 text-foreground">
+                            <Github className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-bold text-foreground">GitHub Connection</h3>
+                            <span className="text-[10px] text-muted-foreground">Code Frequency &amp; Heatmap</span>
+                          </div>
+                        </div>
+
+                        <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-500">
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                          Live Connected
+                        </span>
+                      </div>
+
+                      <div className="mt-4">
+                        <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                          GitHub Username
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.activity?.githubUsername || ""}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              activity: {
+                                ...formData.activity,
+                                githubUsername: e.target.value,
+                              },
+                            })
+                          }
+                          placeholder="e.g. Harsharma96"
+                          className="mt-1.5 w-full rounded-xl border border-border bg-secondary/50 px-3.5 py-2.5 font-mono text-sm font-medium outline-none focus:border-foreground"
+                        />
+                        <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+                          <a
+                            href={`https://github.com/${formData.activity?.githubUsername || "Harsharma96"}`}
+                            target="_blank"
+                            rel="noreferrer noopener"
+                            className="inline-flex items-center gap-1 text-foreground hover:underline"
+                          >
+                            <span>Open GitHub Profile</span>
+                            <ExternalLink className="h-3 w-3" />
+                          </a>
+                          <span className="font-mono text-[10px]">API: jogruber v4</span>
+                        </div>
+                      </div>
+
+                      {/* Live Stats Preview Pill Grid */}
+                      <div className="mt-4 grid grid-cols-2 gap-2 border-t border-border/60 pt-3.5 text-center">
+                        <div className="rounded-xl border border-border/80 bg-card p-2">
+                          <span className="block font-mono text-xs font-black text-foreground">
+                            {activityPreview?.github?.totalContributions ?? 116}
+                          </span>
+                          <span className="block text-[9px] font-mono text-muted-foreground uppercase">
+                            Total Commits (Last Year)
+                          </span>
+                        </div>
+                        <div className="rounded-xl border border-border/80 bg-card p-2">
+                          <span className="block font-mono text-xs font-black text-emerald-500">
+                            365 Days
+                          </span>
+                          <span className="block text-[9px] font-mono text-muted-foreground uppercase">
+                            Continuous Tracking
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Section Headings */}
+                  <div className="mt-6 grid gap-5 sm:grid-cols-2 border-t border-border/80 pt-5">
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                        Section Kicker
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.activity?.kicker || ""}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            activity: { ...formData.activity, kicker: e.target.value },
+                          })
+                        }
+                        placeholder="SYSTEM ACTIVITY"
+                        className="mt-1.5 w-full rounded-xl border border-border bg-secondary/50 px-3.5 py-2.5 text-sm font-medium outline-none focus:border-foreground"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                        Section Heading
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.activity?.heading || ""}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            activity: { ...formData.activity, heading: e.target.value },
+                          })
+                        }
+                        placeholder="Code Frequency & Problem Solving"
+                        className="mt-1.5 w-full rounded-xl border border-border bg-secondary/50 px-3.5 py-2.5 text-sm font-medium outline-none focus:border-foreground"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Live Portfolio Preview Box */}
+                <div className="rounded-3xl border border-border bg-card p-6 sm:p-8 shadow-sm">
+                  <div className="flex items-center justify-between border-b border-border/80 pb-4">
+                    <div>
+                      <h3 className="font-[family-name:var(--font-display)] text-lg font-bold uppercase tracking-tight">
+                        Live Portfolio Activity Preview
+                      </h3>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Interactive preview of how visitors see your live LeetCode &amp; GitHub stats.
+                      </p>
+                    </div>
+                    <span className="inline-flex items-center gap-1.5 text-xs font-mono text-emerald-500 font-semibold">
+                      <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                      Live Feed
+                    </span>
+                  </div>
+
+                  <div className="mt-6">
+                    <Activity />
                   </div>
                 </div>
               </motion.div>
