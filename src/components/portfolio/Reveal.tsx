@@ -122,7 +122,7 @@ export function SectionHeading({
   kicker?: string;
 }) {
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-2 sm:gap-3">
       {kicker ? (
         <motion.div
           initial={{ opacity: 0, x: -12 }}
@@ -138,7 +138,7 @@ export function SectionHeading({
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.75, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-        className="font-[family-name:var(--font-display)] text-3xl font-bold uppercase leading-[0.95] tracking-tight sm:text-5xl"
+        className="font-[family-name:var(--font-display)] text-2xl sm:text-4xl lg:text-5xl font-bold uppercase leading-[1.02] tracking-tight"
       >
         {children}
       </motion.h2>
