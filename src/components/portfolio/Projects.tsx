@@ -147,7 +147,7 @@ export function Projects() {
                 ))}
               </ul>
 
-              <div className="mt-5 sm:mt-7 flex flex-wrap gap-2.5 sm:gap-4">
+              <div className="mt-4 sm:mt-7 flex flex-wrap gap-2 sm:gap-3.5">
                 <motion.a
                   whileHover={{ scale: 1.04, y: -2 }}
                   whileTap={{ scale: 0.95 }}
@@ -155,12 +155,12 @@ export function Projects() {
                   href={project.liveUrl}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="group/btn relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-primary px-4 py-2.5 sm:px-6 sm:py-3.5 text-xs font-bold uppercase tracking-[0.15em] text-primary-foreground shadow-md transition-shadow hover:shadow-lg flex-1 sm:flex-initial"
+                  className="group/btn relative inline-flex items-center justify-center gap-1.5 sm:gap-2 overflow-hidden rounded-full bg-primary px-3.5 py-2 sm:px-5 sm:py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-[0.14em] sm:tracking-[0.16em] text-primary-foreground shadow-md transition-shadow hover:shadow-lg flex-1 sm:flex-initial"
                 >
-                  <span className="relative z-10 flex items-center gap-2">
-                    <Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden />
+                  <span className="relative z-10 flex items-center gap-1.5 sm:gap-2">
+                    <Globe className="h-3.5 w-3.5" aria-hidden />
                     Live demo
-                    <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
+                    <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover/btn:translate-x-1" />
                   </span>
                   <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-white/0 via-white/20 to-white/0 transition-transform duration-700 ease-out group-hover/btn:translate-x-full" />
                 </motion.a>
@@ -171,17 +171,17 @@ export function Projects() {
                   href={project.githubUrl}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-border px-4 py-2.5 sm:px-6 sm:py-3.5 text-xs font-bold uppercase tracking-[0.15em] transition-colors duration-300 hover:bg-secondary hover:border-foreground/30 flex-1 sm:flex-initial"
+                  className="inline-flex items-center justify-center gap-1.5 sm:gap-2 rounded-full border border-border px-3.5 py-2 sm:px-5 sm:py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-[0.14em] sm:tracking-[0.16em] transition-colors duration-300 hover:bg-secondary hover:border-foreground/30 flex-1 sm:flex-initial"
                 >
-                  <Github className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden />
+                  <Github className="h-3.5 w-3.5" aria-hidden />
                   GitHub
                 </motion.a>
               </div>
             </div>
           </div>
 
-          {/* Collapsible Architecture / Steps */}
-          <div className="mt-6 sm:mt-8 rounded-2xl sm:rounded-3xl border border-border bg-secondary/50 p-2.5 sm:p-5">
+          {/* Collapsible Architecture / Steps in Sleek 2-Column Mobile Grid */}
+          <div className="mt-5 sm:mt-8 rounded-2xl sm:rounded-3xl border border-border bg-secondary/50 p-2.5 sm:p-5">
             <button
               type="button"
               onClick={() => setOpen((v) => !v)}
@@ -203,29 +203,34 @@ export function Projects() {
               }`}
             >
               <div className="min-h-0">
-                <ol className="grid gap-2.5 sm:gap-4 sm:grid-cols-2 lg:grid-cols-5">
-                  {project.steps.map((s, i) => (
-                    <motion.li
-                      key={s.n}
-                      initial={{ opacity: 0, y: 15 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.5, delay: i * 0.08 }}
-                      whileHover={{ y: -5, scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="group/step relative cursor-default overflow-hidden rounded-xl sm:rounded-2xl border border-border bg-card p-3 sm:p-4 transition-all duration-300 hover:border-primary/50 hover:shadow-[var(--shadow-lift)]"
-                    >
-                      <p className="font-[family-name:var(--font-display)] text-xl sm:text-2xl font-bold text-muted-foreground transition-all duration-300 group-hover/step:text-foreground group-hover/step:translate-x-0.5">
-                        {s.n}
-                      </p>
-                      <p className="mt-1 sm:mt-2 text-[11px] sm:text-xs font-bold uppercase tracking-[0.14em] sm:tracking-[0.15em] transition-transform duration-300 group-hover/step:translate-x-0.5">
-                        {s.title}
-                      </p>
-                      <p className="mt-1 sm:mt-2 text-[11px] sm:text-xs leading-relaxed text-muted-foreground transition-colors duration-300 group-hover/step:text-foreground/85">
-                        {s.text}
-                      </p>
-                    </motion.li>
-                  ))}
+                <ol className="grid gap-2 sm:gap-3.5 grid-cols-2 sm:grid-cols-2 lg:grid-cols-5">
+                  {project.steps.map((s, i) => {
+                    const isLast = i === project.steps.length - 1 && project.steps.length % 2 !== 0;
+                    return (
+                      <motion.li
+                        key={s.n}
+                        initial={{ opacity: 0, y: 15 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: i * 0.08 }}
+                        whileHover={{ y: -5, scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className={`group/step relative cursor-default overflow-hidden rounded-xl sm:rounded-2xl border border-border bg-card p-2.5 sm:p-4 transition-all duration-300 hover:border-primary/50 hover:shadow-[var(--shadow-lift)] ${
+                          isLast ? "col-span-2 sm:col-span-1" : ""
+                        }`}
+                      >
+                        <p className="font-[family-name:var(--font-display)] text-lg sm:text-2xl font-bold text-muted-foreground transition-all duration-300 group-hover/step:text-foreground group-hover/step:translate-x-0.5">
+                          {s.n}
+                        </p>
+                        <p className="mt-1 sm:mt-2 text-[10px] sm:text-xs font-bold uppercase tracking-[0.14em] sm:tracking-[0.15em] transition-transform duration-300 group-hover/step:translate-x-0.5">
+                          {s.title}
+                        </p>
+                        <p className="mt-0.5 sm:mt-1 text-[10px] sm:text-xs leading-snug text-muted-foreground transition-colors duration-300 group-hover/step:text-foreground/85">
+                          {s.text}
+                        </p>
+                      </motion.li>
+                    );
+                  })}
                 </ol>
               </div>
             </div>

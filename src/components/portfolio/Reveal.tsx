@@ -51,6 +51,10 @@ export function Card({
   return (
     <motion.div
       onClick={() => setIsClicked((prev) => !prev)}
+      onTouchStart={() => setIsHovered(true)}
+      onTouchEnd={() => {
+        setTimeout(() => setIsHovered(false), 1800);
+      }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => {
         setIsHovered(false);
@@ -66,7 +70,7 @@ export function Card({
             }
           : undefined
       }
-      className={`group/card relative rounded-3xl border transition-all duration-700 ease-out select-none cursor-pointer ${
+      className={`group/card relative rounded-2xl sm:rounded-3xl border transition-all duration-700 ease-out select-none cursor-pointer ${
         isTransparent
           ? isDark
             ? "bg-black/30 backdrop-blur-xl border-white/40 shadow-[0_25px_60px_rgba(0,0,0,0.5)] text-white"
@@ -86,14 +90,14 @@ export function Card({
           : className
       }`}
     >
-      {/* Subtle Slow Ambient Color Aura on Hover */}
+      {/* Subtle Slow Ambient Color Aura on Hover / Tap */}
       <div
-        className={`pointer-events-none absolute inset-0 rounded-3xl transition-opacity duration-700 ease-out ${
+        className={`pointer-events-none absolute inset-0 rounded-2xl sm:rounded-3xl transition-opacity duration-700 ease-out ${
           isTransparent ? "opacity-100" : "opacity-0"
         } ${
           isDark
-            ? "bg-gradient-to-br from-white/10 via-transparent to-white/5"
-            : "bg-gradient-to-br from-primary/10 via-transparent to-primary/5"
+            ? "bg-gradient-to-br from-white/15 via-primary/10 to-sky-400/10"
+            : "bg-gradient-to-br from-primary/15 via-transparent to-sky-400/10"
         }`}
       />
       {children}
