@@ -35,12 +35,12 @@ export function Navbar() {
     >
       <nav
         aria-label="Main"
-        className={`mx-auto w-full max-w-[1780px] 2xl:max-w-[1920px] border px-4 py-3 transition-all duration-300 sm:px-6 xl:px-8 ${
+        className={`mx-auto w-full max-w-[1780px] 2xl:max-w-[1920px] border px-4 py-2.5 sm:py-3 transition-all duration-300 sm:px-6 xl:px-8 ${
           open
-            ? "rounded-3xl border-border bg-card/95 shadow-[var(--shadow-card)] backdrop-blur-2xl"
+            ? "rounded-3xl border-border/60 bg-background/80 shadow-lg backdrop-blur-2xl"
             : "rounded-full " +
               (scrolled
-                ? "border-border/80 bg-card/80 shadow-[var(--shadow-card)] backdrop-blur-xl"
+                ? "border-border/40 bg-transparent shadow-xs backdrop-blur-md"
                 : "border-transparent bg-transparent")
         }`}
       >
@@ -49,7 +49,7 @@ export function Navbar() {
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
             href="#home"
-            className="font-[family-name:var(--font-display)] truncate text-lg font-bold uppercase tracking-tight"
+            className="font-[family-name:var(--font-display)] truncate text-lg font-bold uppercase tracking-tight text-foreground"
           >
             {hero.name}
             <span className="text-primary">.</span>
@@ -78,7 +78,7 @@ export function Navbar() {
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-border bg-card transition-colors hover:bg-secondary md:hidden"
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-border/50 bg-transparent text-foreground transition-colors hover:bg-secondary/50 md:hidden cursor-pointer"
           >
             {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </motion.button>
