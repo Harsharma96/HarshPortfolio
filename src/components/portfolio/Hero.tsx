@@ -37,92 +37,97 @@ export function Hero() {
   const shouldPulse = hero.badgePulse !== false;
 
   return (
-    <section id="home" className="scroll-mt-28 pt-28 sm:pt-28 lg:pt-28 xl:pt-32">
-      <div className="grid gap-5 lg:gap-6 lg:grid-cols-[380px_minmax(0,1.2fr)_290px] xl:grid-cols-[410px_minmax(0,1.25fr)_310px] 2xl:grid-cols-[460px_minmax(0,1.3fr)_340px] lg:min-h-[calc(100vh-140px)] items-stretch">
-        <motion.div
-          className="h-full"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <AvatarCard3D
-            imgSrc={imgSrc}
-            cutoutSrc={hero.avatarCutoutUrl || "/harsh-3d-model.png"}
-            onError={() => setImgSrc(defaultAvatarUrl)}
-            badgeText={hero.badgeText}
-            badgeColor={hero.badgeColor}
-            shouldPulse={shouldPulse}
-            currentColor={currentColor}
-          />
-        </motion.div>
+    <section id="home" className="scroll-mt-28 pt-20 sm:pt-24 lg:pt-28 xl:pt-32">
+      <div className="grid gap-3 sm:gap-5 lg:gap-6 lg:grid-cols-[380px_minmax(0,1.2fr)_290px] xl:grid-cols-[410px_minmax(0,1.25fr)_310px] 2xl:grid-cols-[460px_minmax(0,1.3fr)_340px] lg:min-h-[calc(100vh-140px)] items-stretch">
+        {/* Mobile: Side-by-Side 2-column layout (Avatar + Intro), Desktop: Direct grid children via lg:contents */}
+        <div className="grid grid-cols-[135px_1fr] xs:grid-cols-[150px_1fr] sm:grid-cols-2 gap-2.5 sm:gap-4 lg:contents items-stretch">
+          <motion.div
+            className="h-full"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <AvatarCard3D
+              imgSrc={imgSrc}
+              cutoutSrc={hero.avatarCutoutUrl || "/harsh-3d-model.png"}
+              onError={() => setImgSrc(defaultAvatarUrl)}
+              badgeText={hero.badgeText}
+              badgeColor={hero.badgeColor}
+              shouldPulse={shouldPulse}
+              currentColor={currentColor}
+            />
+          </motion.div>
 
-        <motion.div
-          className="h-full"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <Card className="flex h-full flex-col justify-center p-5 sm:p-9 xl:p-12 2xl:p-14">
-            <div>
-              <h1 className="font-[family-name:var(--font-display)] text-3xl sm:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold leading-[1.08] tracking-tight">
-                {words.map((w, i) => (
-                  <motion.span
-                    key={`${w}-${i}`}
-                    className={`mr-2.5 sm:mr-3 inline-block ${
-                      w.includes("Harsh")
-                        ? "bg-gradient-to-r from-foreground via-foreground/90 to-primary/80 bg-clip-text text-transparent"
-                        : ""
-                    }`}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.7, delay: 0.25 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {w}
-                  </motion.span>
-                ))}
-              </h1>
-            </div>
+          <motion.div
+            className="h-full"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <Card className="flex h-full flex-col justify-between p-3 xs:p-4 sm:p-8 xl:p-12 2xl:p-14 rounded-2xl sm:rounded-3xl">
+              <div>
+                <h1 className="font-[family-name:var(--font-display)] text-xl xs:text-2xl sm:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold leading-[1.08] tracking-tight">
+                  {words.map((w, i) => (
+                    <motion.span
+                      key={`${w}-${i}`}
+                      className={`mr-1.5 sm:mr-3 inline-block ${
+                        w.includes("Harsh")
+                          ? "bg-gradient-to-r from-foreground via-foreground/90 to-primary/80 bg-clip-text text-transparent"
+                          : ""
+                      }`}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.7, delay: 0.25 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+                      whileHover={{ scale: 1.05, y: -2 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {w}
+                    </motion.span>
+                  ))}
+                </h1>
 
-            <p className="mt-3 sm:mt-4 font-[family-name:var(--font-display)] text-xs sm:text-sm xl:text-base font-bold uppercase tracking-[0.25em] text-muted-foreground">
-              {hero.role}
-            </p>
+                <p className="mt-1 sm:mt-4 font-[family-name:var(--font-display)] text-[9px] xs:text-[10px] sm:text-sm xl:text-base font-bold uppercase tracking-[0.18em] sm:tracking-[0.25em] text-muted-foreground">
+                  {hero.role}
+                </p>
 
-            <p className="mt-4 sm:mt-5 max-w-xl xl:max-w-2xl 2xl:max-w-3xl text-xs sm:text-sm xl:text-base leading-relaxed text-muted-foreground">
-              {hero.bio}
-            </p>
+                <p className="mt-1.5 sm:mt-5 max-w-xl xl:max-w-2xl 2xl:max-w-3xl text-[10px] xs:text-xs sm:text-sm xl:text-base leading-snug sm:leading-relaxed text-muted-foreground line-clamp-3 sm:line-clamp-none">
+                  {hero.bio}
+                </p>
 
-            <p className="mt-3 sm:mt-4 text-xs sm:text-sm xl:text-base font-bold italic">{hero.tagline}</p>
+                <p className="mt-1 sm:mt-4 text-[10px] xs:text-xs sm:text-sm xl:text-base font-bold italic line-clamp-1 sm:line-clamp-none">
+                  {hero.tagline}
+                </p>
+              </div>
 
-            <div className="mt-6 sm:mt-7 xl:mt-9 flex flex-wrap gap-2.5 sm:gap-3">
-              <motion.a
-                whileHover={{ scale: 1.04, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ duration: 0.2 }}
-                href="#work"
-                className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-primary px-5 py-3 sm:px-6 sm:py-3.5 xl:px-8 xl:py-4 text-xs xl:text-sm font-bold uppercase tracking-[0.18em] text-primary-foreground shadow-md transition-shadow hover:shadow-lg flex-1 sm:flex-initial"
-              >
-                <span className="relative z-10 flex items-center gap-2">
-                  View my work
-                  <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                </span>
-                <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-white/0 via-white/20 to-white/0 transition-transform duration-700 ease-out group-hover:translate-x-full" />
-              </motion.a>
-              <motion.button
-                whileHover={{ scale: 1.04, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ duration: 0.2 }}
-                onClick={() => setResumeOpen(true)}
-                className="group inline-flex items-center justify-center gap-2.5 rounded-full border border-border bg-card/60 px-5 py-3 sm:px-6 sm:py-3.5 xl:px-8 xl:py-4 text-xs xl:text-sm font-bold uppercase tracking-[0.18em] text-foreground transition-all duration-300 hover:border-primary/50 hover:bg-secondary hover:shadow-md cursor-pointer flex-1 sm:flex-initial"
-              >
-                <FileText className="h-4 w-4 text-primary transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6" aria-hidden />
-                <span>Resume</span>
-                <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" title="Ready to view" />
-              </motion.button>
-            </div>
-          </Card>
-        </motion.div>
+              <div className="mt-3 sm:mt-7 xl:mt-9 flex flex-wrap gap-1.5 sm:gap-3">
+                <motion.a
+                  whileHover={{ scale: 1.04, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  href="#work"
+                  className="group relative inline-flex items-center justify-center gap-1 sm:gap-2 overflow-hidden rounded-full bg-primary px-3 py-1.5 xs:px-3.5 xs:py-2 sm:px-6 sm:py-3.5 xl:px-8 xl:py-4 text-[10px] xs:text-xs xl:text-sm font-bold uppercase tracking-wider sm:tracking-[0.18em] text-primary-foreground shadow-md transition-shadow hover:shadow-lg flex-1 sm:flex-initial"
+                >
+                  <span className="relative z-10 flex items-center gap-1 sm:gap-2">
+                    Work
+                    <ArrowUpRight className="h-3 w-3 sm:h-4 sm:w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  </span>
+                  <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-white/0 via-white/20 to-white/0 transition-transform duration-700 ease-out group-hover:translate-x-full" />
+                </motion.a>
+                <motion.button
+                  whileHover={{ scale: 1.04, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  onClick={() => setResumeOpen(true)}
+                  className="group inline-flex items-center justify-center gap-1 sm:gap-2 rounded-full border border-border bg-card/60 px-3 py-1.5 xs:px-3.5 xs:py-2 sm:px-6 sm:py-3.5 xl:px-8 xl:py-4 text-[10px] xs:text-xs xl:text-sm font-bold uppercase tracking-wider sm:tracking-[0.18em] text-foreground transition-all duration-300 hover:border-primary/50 hover:bg-secondary hover:shadow-md cursor-pointer flex-1 sm:flex-initial"
+                >
+                  <FileText className="h-3 w-3 sm:h-4 sm:w-4 text-primary transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6" aria-hidden />
+                  <span>Resume</span>
+                  <span className="flex h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-emerald-500 animate-pulse" title="Ready to view" />
+                </motion.button>
+              </div>
+            </Card>
+          </motion.div>
+        </div>
 
         <motion.div
           className="h-full"
@@ -130,16 +135,16 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
         >
-          <Card className="flex h-full flex-col justify-between p-6 xl:p-8">
+          <Card className="flex h-full flex-col justify-between p-3.5 sm:p-6 xl:p-8 rounded-2xl sm:rounded-3xl">
             <div>
               <div className="flex items-center justify-between">
                 <Label>Tech stack</Label>
-                <span className="text-xs uppercase tracking-wider text-muted-foreground font-semibold flex items-center gap-1">
+                <span className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground font-semibold flex items-center gap-1">
                   <span>Click for code</span>
                   <span className="text-primary font-mono">&lt;/&gt;</span>
                 </span>
               </div>
-              <ul className="mt-5 grid grid-cols-2 gap-2.5 xl:gap-3">
+              <ul className="mt-3 sm:mt-5 grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-2 lg:grid-cols-2 gap-2 sm:gap-2.5 xl:gap-3">
                 {hero.stack.map((s, i) => {
                   const IconComponent = resolveIcon(s.iconName);
                   const isLastOdd = i === hero.stack.length - 1 && hero.stack.length % 2 !== 0;
@@ -156,8 +161,8 @@ export function Hero() {
                       tabIndex={0}
                       aria-haspopup="dialog"
                       title={`Click to view ${s.label} code snippet & output`}
-                      className={`group flex flex-col gap-2 rounded-2xl border border-border bg-secondary/60 p-3 xl:p-4 transition-all duration-300 hover:border-primary/50 cursor-pointer shadow-xs hover:shadow-[var(--shadow-lift)] relative overflow-hidden focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary ${
-                        isLastOdd ? "col-span-2" : ""
+                      className={`group flex flex-col gap-1.5 sm:gap-2 rounded-xl sm:rounded-2xl border border-border bg-secondary/60 p-2.5 sm:p-3 xl:p-4 transition-all duration-300 hover:border-primary/50 cursor-pointer shadow-xs hover:shadow-[var(--shadow-lift)] relative overflow-hidden focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary ${
+                        isLastOdd ? "col-span-2 xs:col-span-1 sm:col-span-2" : ""
                       }`}
                     >
                       <div className="flex items-center justify-between">
@@ -169,18 +174,18 @@ export function Hero() {
                             ease: "easeInOut",
                             delay: i * 0.2,
                           }}
-                          className="grid h-7 w-7 xl:h-8 xl:w-8 place-items-center rounded-xl bg-card border border-border/80 text-foreground transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary group-hover:scale-115 group-hover:rotate-12 shadow-xs"
+                          className="grid h-6 w-6 xs:h-7 xs:w-7 xl:h-8 xl:w-8 place-items-center rounded-lg sm:rounded-xl bg-card border border-border/80 text-foreground transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary group-hover:scale-115 group-hover:rotate-12 shadow-xs"
                         >
                           <IconComponent
-                            className="h-3.5 w-3.5 xl:h-4 xl:w-4 shrink-0 transition-transform duration-300"
+                            className="h-3 w-3 sm:h-3.5 sm:w-3.5 xl:h-4 xl:w-4 shrink-0 transition-transform duration-300"
                             aria-hidden
                           />
                         </motion.div>
-                        <span className="inline-flex items-center gap-1 rounded-md bg-card/60 px-1.5 py-0.5 text-xs font-mono text-muted-foreground/70 group-hover:text-primary group-hover:border-primary/40 border border-border/50 transition-colors duration-300 font-bold">
+                        <span className="inline-flex items-center gap-1 rounded-md bg-card/60 px-1 py-0.5 text-[9px] sm:text-xs font-mono text-muted-foreground/70 group-hover:text-primary group-hover:border-primary/40 border border-border/50 transition-colors duration-300 font-bold">
                           &lt;/&gt;
                         </span>
                       </div>
-                      <span className="truncate text-xs xl:text-sm font-bold tracking-wide transition-transform duration-300 group-hover:translate-x-0.5">
+                      <span className="truncate text-[11px] sm:text-xs xl:text-sm font-bold tracking-wide transition-transform duration-300 group-hover:translate-x-0.5">
                         {s.label}
                       </span>
                     </motion.li>
@@ -188,7 +193,7 @@ export function Hero() {
                 })}
               </ul>
             </div>
-            <p className="mt-5 text-xs font-medium text-muted-foreground">
+            <p className="mt-3 sm:mt-5 text-[10px] sm:text-xs font-medium text-muted-foreground">
               ↳ Open to opportunities
             </p>
           </Card>
