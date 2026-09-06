@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Mail } from "lucide-react";
+import { ArrowUpRight, FileText } from "lucide-react";
 import avatar from "@/assets/harsh-frame.png";
 import { Card, Label } from "./Reveal";
 import { usePortfolio } from "@/context/PortfolioContext";
 import { resolveIcon } from "./IconResolver";
 import { TechCodeModal } from "./TechCodeModal";
+import { ResumeModal } from "./ResumeModal";
 import { AvatarCard3D } from "./AvatarCard3D";
 
 export function Hero() {
@@ -15,6 +16,7 @@ export function Hero() {
   const { hero } = data;
   const defaultAvatarUrl = typeof avatar === "string" ? avatar : (avatar as { src?: string })?.src || "/harsh-frame.png";
   const [selectedTech, setSelectedTech] = useState<string | null>(null);
+  const [resumeOpen, setResumeOpen] = useState(false);
   const [imgSrc, setImgSrc] = useState<string>(hero.avatarUrl || defaultAvatarUrl);
 
   // Sync avatar image immediately when updated in admin
@@ -106,16 +108,17 @@ export function Hero() {
                 </span>
                 <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-white/0 via-white/20 to-white/0 transition-transform duration-700 ease-out group-hover:translate-x-full" />
               </motion.a>
-              <motion.a
+              <motion.button
                 whileHover={{ scale: 1.04, y: -2 }}
                 whileTap={{ scale: 0.96 }}
                 transition={{ duration: 0.2 }}
-                href="#contact"
-                className="group inline-flex items-center gap-2 rounded-full border border-border px-6 py-3.5 xl:px-8 xl:py-4 text-xs xl:text-sm font-bold uppercase tracking-[0.18em] transition-colors duration-300 hover:bg-secondary"
+                onClick={() => setResumeOpen(true)}
+                className="group inline-flex items-center gap-2.5 rounded-full border border-border bg-card/60 px-6 py-3.5 xl:px-8 xl:py-4 text-xs xl:text-sm font-bold uppercase tracking-[0.18em] text-foreground transition-all duration-300 hover:border-primary/50 hover:bg-secondary hover:shadow-md cursor-pointer"
               >
-                <Mail className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
-                <span>Contact me</span>
-              </motion.a>
+                <FileText className="h-4 w-4 text-primary transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6" aria-hidden />
+                <span>Resume</span>
+                <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" title="Ready to view" />
+              </motion.button>
             </div>
           </Card>
         </motion.div>
@@ -195,6 +198,12 @@ export function Hero() {
       <TechCodeModal
         selectedTech={selectedTech}
         onClose={() => setSelectedTech(null)}
+      />
+
+      {/* Interactive Resume Modal */}
+      <ResumeModal
+        isOpen={resumeOpen}
+        onClose={() => setResumeOpen(false)}
       />
     </section>
   );
