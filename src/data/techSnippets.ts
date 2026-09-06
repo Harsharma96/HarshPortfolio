@@ -17,11 +17,12 @@ export const techSnippets: Record<string, TechSnippet> = {
     filename: "harsh.cs",
     language: "csharp",
     code: `while (coffee.IsHot()) {
-    try {
-        harsh.WriteCode();
-    } catch (Exception) {
-        stackOverflow.CopyPaste(); // Works! 🚀
-    }
+  try {
+    harsh.WriteCode();
+  } catch (Exception) {
+    // StackOverflow saves the day! 🚀
+    stackOverflow.CopyPaste();
+  }
 }`,
     output: "Powered by Caffeine & Stack Overflow ☕",
     status: "Exit Code 0 (Success)",
@@ -32,11 +33,11 @@ export const techSnippets: Record<string, TechSnippet> = {
     tagline: "Making Bugs Feel Welcome 🐞",
     filename: "Program.cs",
     language: "csharp",
-    code: `var bug = new Bug("Production issue");
+    code: `var bug = new Bug("Prod Issue");
 
 if (bug.Exists) {
-    harsh.Say("It works on my machine! ¯\\_(ツ)_/¯");
-    bug.MarkAsFeature(); // Problem solved!
+  // Works on my machine! ¯\\_(ツ)_/¯
+  bug.MarkAsFeature();
 }`,
     output: "Making Bugs Feel Welcome 🐞",
     status: "200 OK (Feature Released)",
@@ -48,8 +49,8 @@ if (bug.Exists) {
     filename: "secrets.sql",
     language: "sql",
     code: `SELECT * FROM users 
-WHERE search_history LIKE '%center div%'
-   OR excuses LIKE '%server down%';
+WHERE history LIKE '%center div%'
+   OR excuse LIKE '%server down%';
 
 -- Harsh knows. Harsh always knows. 💀`,
     output: "I Know Where Your Data Lives 👀",
@@ -63,7 +64,8 @@ WHERE search_history LIKE '%center div%'
     language: "typescript",
     code: `export default function Career() {
   const role = "Next.js Developer";
-  return "Sounds 10x more professional! 😎";
+  // Sounds 10x more professional! 😎
+  return role.deploy();
 }`,
     output: "Because “Next” Sounds Professional 🚀",
     status: "Fast Refresh 42ms",
@@ -74,10 +76,10 @@ WHERE search_history LIKE '%center div%'
     tagline: "Just One More <div> 📦",
     filename: "index.html",
     language: "html",
-    code: `<div id="final-fix">
+    code: `<div class="final-fix">
   <div class="wrapper">
     <div class="last-div">
-      <p>I swear this is the last one! 😂</p>
+      <p>Last div, I swear! 😂</p>
     </div>
   </div>
 </div>`,
@@ -91,10 +93,11 @@ WHERE search_history LIKE '%center div%'
     filename: "styles.css",
     language: "css",
     code: `.element {
-  margin: 0 auto;       /* failed */
-  text-align: center;   /* failed */
-  position: absolute;   /* send help */
-  transform: translate(-50%, -50%); /* Done! 🎉 */
+  margin: 0 auto; /* failed */
+  text-align: center; /* nope */
+  position: absolute;
+  /* Centered! 🎯 */
+  transform: translate(-50%, -50%);
 }`,
     output: "Trust Me, It's Centered. 🎯",
     status: "Perfect Coordinates (50%, 50%)",
