@@ -8,16 +8,7 @@ import {
   ExternalLink,
   Printer,
   FileText,
-  Mail,
-  Phone,
-  MapPin,
-  GraduationCap,
-  Briefcase,
-  Award,
-  Code2,
   CheckCircle2,
-  Globe2,
-  UserCheck,
 } from "lucide-react";
 
 interface ResumeModalProps {
@@ -86,8 +77,9 @@ export function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
                 <h3 className="font-[family-name:var(--font-display)] text-sm sm:text-base font-bold uppercase tracking-wider text-foreground">
                   Harsh — .NET Developer Resume
                 </h3>
-                <p className="text-[11px] font-medium text-muted-foreground">
-                  Official CV • Verified Details
+                <p className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  1-Page Full A4 Setup • Verified Details
                 </p>
               </div>
             </div>
@@ -95,10 +87,10 @@ export function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
             {/* View Switcher & Action Buttons */}
             <div className="flex items-center gap-2">
               {/* Tab Selector */}
-              <div className="flex items-center rounded-full border border-border bg-background p-0.5 text-xs font-semibold">
+              <div className="flex items-center rounded-full border border-border bg-background p-0.5 text-xs font-semibold shadow-inner">
                 <button
                   onClick={() => setActiveTab("interactive")}
-                  className={`rounded-full px-3 py-1 transition-all ${
+                  className={`rounded-full px-3.5 py-1 transition-all ${
                     activeTab === "interactive"
                       ? "bg-primary text-primary-foreground shadow-sm"
                       : "text-muted-foreground hover:text-foreground"
@@ -108,13 +100,13 @@ export function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
                 </button>
                 <button
                   onClick={() => setActiveTab("pdf")}
-                  className={`rounded-full px-3 py-1 transition-all ${
+                  className={`rounded-full px-3.5 py-1 transition-all ${
                     activeTab === "pdf"
                       ? "bg-primary text-primary-foreground shadow-sm"
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  PDF Preview
+                  PDF Document (1 Page)
                 </button>
               </div>
 
@@ -124,7 +116,7 @@ export function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
                 download="Harsh_Resume.pdf"
                 onClick={handleDownload}
                 className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-primary-foreground shadow-sm transition-transform hover:scale-105 active:scale-95"
-                title="Download Official Resume PDF"
+                title="Download Official 1-Page Resume PDF"
               >
                 {downloadSuccess ? (
                   <>
@@ -164,162 +156,142 @@ export function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
           {/* Modal Content */}
           <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 space-y-6">
             {activeTab === "interactive" ? (
-              <div className="mx-auto max-w-3xl space-y-6 rounded-2xl border border-border/70 bg-card p-6 sm:p-8 shadow-sm">
-                {/* Resume Header */}
-                <div className="text-center pb-5 border-b-2 border-primary/80">
-                  <h1 className="font-[family-name:var(--font-display)] text-3xl sm:text-4xl font-black uppercase tracking-wider text-foreground">
+              <div className="mx-auto max-w-3xl rounded-2xl border border-border bg-card p-6 sm:p-8 md:p-10 shadow-sm space-y-5 font-sans">
+                
+                {/* Header */}
+                <div className="text-center pb-3 border-b-2 border-[#1F3864]">
+                  <h1 className="text-3xl sm:text-4xl font-extrabold tracking-wide uppercase text-[#1F3864] dark:text-blue-400">
                     HARSH
                   </h1>
-                  <p className="text-sm sm:text-base font-bold uppercase tracking-widest text-primary mt-1">
+                  <p className="text-sm sm:text-base font-bold uppercase tracking-widest text-[#555555] dark:text-gray-300 mt-0.5">
                     .NET Developer
                   </p>
-                  <div className="mt-3 flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-xs font-medium text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <MapPin className="h-3.5 w-3.5 text-primary" />
-                      Rampur, Uttar Pradesh - 244924
-                    </span>
-                    <span className="text-border">•</span>
-                    <a
-                      href="tel:+919675873737"
-                      className="flex items-center gap-1 hover:text-primary transition-colors"
-                    >
-                      <Phone className="h-3.5 w-3.5 text-primary" />
-                      +91 9675873737
-                    </a>
-                    <span className="text-border">•</span>
-                    <a
-                      href="mailto:hs96758737@gmail.com"
-                      className="flex items-center gap-1 hover:text-primary transition-colors"
-                    >
-                      <Mail className="h-3.5 w-3.5 text-primary" />
-                      hs96758737@gmail.com
-                    </a>
-                  </div>
+                  <p className="text-xs text-[#555555] dark:text-gray-400 mt-2 flex flex-wrap items-center justify-center gap-2">
+                    <span>Rampur, Uttar Pradesh - 244924</span>
+                    <span>|</span>
+                    <a href="tel:+919675873737" className="hover:underline">+91 9675873737</a>
+                    <span>|</span>
+                    <a href="mailto:hs96758737@gmail.com" className="hover:underline">hs96758737@gmail.com</a>
+                  </p>
                 </div>
 
                 {/* 1. CAREER OBJECTIVE */}
-                <section className="space-y-2">
-                  <h2 className="text-xs font-extrabold uppercase tracking-[0.2em] text-primary border-b border-primary/40 pb-1 flex items-center gap-2">
-                    <Briefcase className="h-3.5 w-3.5" /> Career Objective
+                <section className="space-y-1.5">
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-[#1F3864] dark:text-blue-400 border-b border-[#1F3864] pb-0.5">
+                    CAREER OBJECTIVE
                   </h2>
-                  <p className="text-xs sm:text-sm leading-relaxed text-muted-foreground">
-                    Motivated and detail-oriented BCA graduate with a strong foundation in <strong className="text-foreground font-semibold">C#, .NET, and MySQL</strong>, seeking an entry-level .NET Developer position. Eager to apply hands-on project experience and problem-solving skills to build efficient, scalable software solutions while continuously growing technically.
+                  <p className="text-xs sm:text-sm leading-relaxed text-foreground/90 text-justify">
+                    Motivated and detail-oriented BCA graduate with a strong foundation in C#, .NET, and MySQL, seeking an entry-level .NET Developer position. Eager to apply hands-on project experience and problem-solving skills to build efficient, scalable software solutions while continuously growing technically.
                   </p>
                 </section>
 
                 {/* 2. TECHNICAL SKILLS */}
-                <section className="space-y-2.5">
-                  <h2 className="text-xs font-extrabold uppercase tracking-[0.2em] text-primary border-b border-primary/40 pb-1 flex items-center gap-2">
-                    <Code2 className="h-3.5 w-3.5" /> Technical Skills
+                <section className="space-y-1.5">
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-[#1F3864] dark:text-blue-400 border-b border-[#1F3864] pb-0.5">
+                    TECHNICAL SKILLS
                   </h2>
-                  <ul className="space-y-1.5 text-xs sm:text-sm text-muted-foreground list-none pl-0">
+                  <ul className="space-y-1 text-xs sm:text-sm text-foreground/90 list-none pl-0">
                     <li className="flex items-start gap-2">
-                      <span className="text-primary font-bold">•</span>
-                      <span><strong className="text-foreground">Programming & Frameworks:</strong> C#, .NET</span>
+                      <span className="text-[#1F3864] dark:text-blue-400 font-bold">•</span>
+                      <span><strong>Programming & Frameworks:</strong> C#, .NET</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-primary font-bold">•</span>
-                      <span><strong className="text-foreground">Database:</strong> MySQL</span>
+                      <span className="text-[#1F3864] dark:text-blue-400 font-bold">•</span>
+                      <span><strong>Database:</strong> MySQL</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-primary font-bold">•</span>
-                      <span><strong className="text-foreground">Frontend:</strong> Next.js</span>
+                      <span className="text-[#1F3864] dark:text-blue-400 font-bold">•</span>
+                      <span><strong>Frontend:</strong> Next.js</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-primary font-bold">•</span>
-                      <span><strong className="text-foreground">Concepts:</strong> Object-Oriented Programming, Web Application Development, Database Design</span>
+                      <span className="text-[#1F3864] dark:text-blue-400 font-bold">•</span>
+                      <span><strong>Concepts:</strong> Object-Oriented Programming, Web Application Development, Database Design</span>
                     </li>
                   </ul>
                 </section>
 
                 {/* 3. SOFT SKILLS */}
-                <section className="space-y-2">
-                  <h2 className="text-xs font-extrabold uppercase tracking-[0.2em] text-primary border-b border-primary/40 pb-1 flex items-center gap-2">
-                    <UserCheck className="h-3.5 w-3.5" /> Soft Skills
+                <section className="space-y-1.5">
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-[#1F3864] dark:text-blue-400 border-b border-[#1F3864] pb-0.5">
+                    SOFT SKILLS
                   </h2>
-                  <ul className="space-y-1 text-xs sm:text-sm text-muted-foreground list-none pl-0">
+                  <ul className="space-y-1 text-xs sm:text-sm text-foreground/90 list-none pl-0">
                     <li className="flex items-center gap-2">
-                      <span className="text-primary font-bold">•</span>
+                      <span className="text-[#1F3864] dark:text-blue-400 font-bold">•</span>
                       <span>Communication</span>
                     </li>
                     <li className="flex items-center gap-2">
-                      <span className="text-primary font-bold">•</span>
+                      <span className="text-[#1F3864] dark:text-blue-400 font-bold">•</span>
                       <span>Leadership</span>
                     </li>
                   </ul>
                 </section>
 
                 {/* 4. PROJECTS */}
-                <section className="space-y-2.5">
-                  <h2 className="text-xs font-extrabold uppercase tracking-[0.2em] text-primary border-b border-primary/40 pb-1 flex items-center gap-2">
-                    <Briefcase className="h-3.5 w-3.5" /> Projects
+                <section className="space-y-1.5">
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-[#1F3864] dark:text-blue-400 border-b border-[#1F3864] pb-0.5">
+                    PROJECTS
                   </h2>
-                  <div className="rounded-xl border border-border/70 bg-secondary/20 p-4 space-y-2">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <div className="space-y-1">
+                    <div className="flex items-baseline gap-2">
+                      <h3 className="text-xs sm:text-sm font-bold text-foreground">
                         FoodEat – Food Ordering Web Application
-                        <span className="rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2.5 py-0.5 text-[10px] font-bold border border-emerald-500/20">
-                          Completed
-                        </span>
                       </h3>
+                      <span className="text-xs italic text-muted-foreground">(Completed)</span>
                     </div>
                     <p className="text-xs italic text-muted-foreground">
                       Tech Stack: Next.js (Frontend), .NET (Backend), MySQL (Database)
                     </p>
-                    <ul className="space-y-1.5 text-xs text-muted-foreground list-none pl-0 pt-1">
+                    <ul className="space-y-1 text-xs sm:text-sm text-foreground/90 list-none pl-0 pt-0.5">
                       <li className="flex items-start gap-2">
-                        <span className="text-primary font-bold">•</span>
+                        <span className="text-[#1F3864] dark:text-blue-400 font-bold">•</span>
                         <span>Built a modern, responsive food ordering web application with an attractive, animated UI and interactive food cards.</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="text-primary font-bold">•</span>
+                        <span className="text-[#1F3864] dark:text-blue-400 font-bold">•</span>
                         <span>Implemented core e-commerce features including a shopping cart and a seamless end-to-end ordering flow.</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="text-primary font-bold">•</span>
+                        <span className="text-[#1F3864] dark:text-blue-400 font-bold">•</span>
                         <span>Focused on performance, responsiveness, and user engagement across devices to deliver a smooth UI/UX experience.</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="text-primary font-bold">•</span>
+                        <span className="text-[#1F3864] dark:text-blue-400 font-bold">•</span>
                         <span>Developed the backend using .NET with MySQL for data storage and management.</span>
                       </li>
                     </ul>
                   </div>
                 </section>
 
-                {/* 5. EDUCATION */}
-                <section className="space-y-2.5">
-                  <h2 className="text-xs font-extrabold uppercase tracking-[0.2em] text-primary border-b border-primary/40 pb-1 flex items-center gap-2">
-                    <GraduationCap className="h-3.5 w-3.5" /> Education
+                {/* 5. EDUCATION (NO SCORE COLUMN) */}
+                <section className="space-y-1.5">
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-[#1F3864] dark:text-blue-400 border-b border-[#1F3864] pb-0.5">
+                    EDUCATION
                   </h2>
-                  <div className="overflow-x-auto rounded-xl border border-border">
-                    <table className="w-full text-left text-xs">
-                      <thead className="border-b border-border bg-primary text-primary-foreground font-bold">
+                  <div className="overflow-x-auto rounded-lg border border-border">
+                    <table className="w-full text-left text-xs sm:text-sm">
+                      <thead className="bg-[#1F3864] text-white font-bold">
                         <tr>
-                          <th className="p-2.5 sm:p-3">Qualification</th>
-                          <th className="p-2.5 sm:p-3">Institution / Board</th>
-                          <th className="p-2.5 sm:p-3">Year</th>
-                          <th className="p-2.5 sm:p-3">Score</th>
+                          <th className="p-2.5">Qualification</th>
+                          <th className="p-2.5">Institution / Board</th>
+                          <th className="p-2.5 text-right">Year</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-border text-muted-foreground font-medium">
-                        <tr className="hover:bg-secondary/30 transition-colors">
-                          <td className="p-2.5 sm:p-3 font-bold text-foreground">Bachelor of Computer Applications (BCA)</td>
-                          <td className="p-2.5 sm:p-3">Teerthanker Mahaveer University</td>
-                          <td className="p-2.5 sm:p-3 font-mono">2026</td>
-                          <td className="p-2.5 sm:p-3 font-bold text-emerald-600 dark:text-emerald-400 font-mono">7.21 CGPA</td>
+                      <tbody className="divide-y divide-border text-foreground/90">
+                        <tr>
+                          <td className="p-2.5 font-bold">Bachelor of Computer Applications (BCA)</td>
+                          <td className="p-2.5">Teerthanker Mahaveer University</td>
+                          <td className="p-2.5 text-right font-mono font-bold">2026</td>
                         </tr>
-                        <tr className="hover:bg-secondary/30 transition-colors">
-                          <td className="p-2.5 sm:p-3 font-semibold text-foreground">12th (Intermediate)</td>
-                          <td className="p-2.5 sm:p-3">UP Board</td>
-                          <td className="p-2.5 sm:p-3 font-mono">2023</td>
-                          <td className="p-2.5 sm:p-3 font-mono">61%</td>
+                        <tr>
+                          <td className="p-2.5">12th (Intermediate)</td>
+                          <td className="p-2.5">UP Board</td>
+                          <td className="p-2.5 text-right font-mono font-bold">2023</td>
                         </tr>
-                        <tr className="hover:bg-secondary/30 transition-colors">
-                          <td className="p-2.5 sm:p-3 font-semibold text-foreground">10th (High School)</td>
-                          <td className="p-2.5 sm:p-3">UP Board</td>
-                          <td className="p-2.5 sm:p-3 font-mono">2021</td>
-                          <td className="p-2.5 sm:p-3 font-mono">71%</td>
+                        <tr>
+                          <td className="p-2.5">10th (High School)</td>
+                          <td className="p-2.5">UP Board</td>
+                          <td className="p-2.5 text-right font-mono font-bold">2021</td>
                         </tr>
                       </tbody>
                     </table>
@@ -327,50 +299,45 @@ export function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
                 </section>
 
                 {/* 6. CERTIFICATIONS */}
-                <section className="space-y-2">
-                  <h2 className="text-xs font-extrabold uppercase tracking-[0.2em] text-primary border-b border-primary/40 pb-1 flex items-center gap-2">
-                    <Award className="h-3.5 w-3.5" /> Certifications
+                <section className="space-y-1.5">
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-[#1F3864] dark:text-blue-400 border-b border-[#1F3864] pb-0.5">
+                    CERTIFICATIONS
                   </h2>
-                  <div className="rounded-xl border border-border bg-card p-3.5 space-y-1 text-xs">
-                    <p className="font-bold text-foreground">
-                      Artificial Intelligence for Intermediate – 3C, IBM SkillsBuild (July 2026)
-                    </p>
-                    <p className="text-muted-foreground leading-relaxed">
-                      Machine Learning with Python, Building Chatbots, Linear Regression with PyTorch, Reinforcement Learning & Deep Learning Essentials, Game-playing AI with TensorFlow.
-                    </p>
-                  </div>
+                  <p className="text-xs sm:text-sm leading-relaxed text-foreground/90">
+                    <strong className="text-foreground font-semibold">Artificial Intelligence for Intermediate – 3C, IBM SkillsBuild (July 2026)</strong> – Machine Learning with Python, Building Chatbots, Linear Regression with PyTorch, Reinforcement Learning & Deep Learning Essentials, Game-playing AI with TensorFlow.
+                  </p>
                 </section>
 
                 {/* 7. LANGUAGES KNOWN */}
-                <section className="space-y-2">
-                  <h2 className="text-xs font-extrabold uppercase tracking-[0.2em] text-primary border-b border-primary/40 pb-1 flex items-center gap-2">
-                    <Globe2 className="h-3.5 w-3.5" /> Languages Known
+                <section className="space-y-1.5">
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-[#1F3864] dark:text-blue-400 border-b border-[#1F3864] pb-0.5">
+                    LANGUAGES KNOWN
                   </h2>
-                  <div className="flex gap-4 text-xs text-muted-foreground">
+                  <div className="flex gap-5 text-xs sm:text-sm text-foreground/90">
                     <span className="flex items-center gap-1.5">
-                      <span className="text-primary font-bold">•</span> English
+                      <span className="text-[#1F3864] dark:text-blue-400 font-bold">•</span> English
                     </span>
                     <span className="flex items-center gap-1.5">
-                      <span className="text-primary font-bold">•</span> Hindi
+                      <span className="text-[#1F3864] dark:text-blue-400 font-bold">•</span> Hindi
                     </span>
                   </div>
                 </section>
 
                 {/* 8. DECLARATION */}
-                <section className="space-y-3 pt-3 border-t border-dashed border-border text-xs text-muted-foreground">
-                  <h2 className="text-xs font-extrabold uppercase tracking-[0.2em] text-primary border-b border-primary/40 pb-1">
-                    Declaration
+                <section className="space-y-3 pt-3 border-t border-[#1F3864] text-xs sm:text-sm text-foreground/90">
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-[#1F3864] dark:text-blue-400 border-b border-[#1F3864] pb-0.5">
+                    DECLARATION
                   </h2>
                   <p>
                     I hereby declare that the above information is true to the best of my knowledge and belief.
                   </p>
-                  <div className="flex justify-between items-center pt-2 font-semibold text-foreground">
+                  <div className="flex justify-between items-center pt-2 font-bold text-foreground">
                     <span>Date: ____________</span>
                     <span>Signature: Harsh</span>
                   </div>
                 </section>
 
-                {/* Action Bar inside Interactive CV */}
+                {/* Bottom Actions Bar */}
                 <div className="flex flex-wrap items-center justify-end gap-3 pt-4 border-t border-border">
                   <button
                     onClick={handlePrint}
@@ -385,7 +352,7 @@ export function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
                     className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2 text-xs font-bold uppercase tracking-wider text-primary-foreground shadow-md transition-transform hover:scale-105 active:scale-95"
                   >
                     <Download className="h-3.5 w-3.5" />
-                    Download PDF
+                    Download PDF (1 Page)
                   </a>
                 </div>
               </div>
@@ -395,7 +362,7 @@ export function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
                 <iframe
                   src="/Harsh_Resume.pdf#toolbar=1"
                   className="w-full h-full rounded-2xl"
-                  title="Harsh .NET Developer Resume"
+                  title="Harsh .NET Developer Resume - 1 Page A4"
                 />
               </div>
             )}
