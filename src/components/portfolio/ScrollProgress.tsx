@@ -31,10 +31,18 @@ export function ScrollProgress() {
   }, [scrollY, scrollYProgress]);
 
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    const lenis = typeof window !== "undefined"
+      ? (window as unknown as { __lenis?: { scrollTo: (target: number, opts?: object) => void } }).__lenis
+      : null;
+
+    if (lenis) {
+      lenis.scrollTo(0, { duration: 1.2 });
+    } else {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
   };
 
   // SVG circle progress calculations (radius 18, circumference ~ 113.1)

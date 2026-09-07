@@ -19,9 +19,24 @@ export function Navbar() {
   const { hero } = data;
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 24);
+
+      // Scrollspy: find the active section
+      const sectionIds = ["home", "about", "skills", "activity", "work", "contact"];
+      const scrollPos = window.scrollY + 220;
+      for (const id of [...sectionIds].reverse()) {
+        const el = document.getElementById(id);
+        if (el && el.offsetTop <= scrollPos) {
+          setActiveSection(id);
+          break;
+        }
+      }
+    };
+
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -57,20 +72,31 @@ export function Navbar() {
           </motion.a>
 
           <ul className="hidden shrink-0 items-center gap-7 md:flex">
-            {links.map((l, i) => (
-              <li key={l.href}>
-                <motion.a
-                  whileHover={{ y: -2 }}
-                  whileTap={{ y: 0 }}
-                  transition={{ duration: 0.2 }}
-                  href={l.href}
-                  className="group relative inline-block text-xs font-semibold uppercase tracking-[0.18em] text-foreground transition-colors hover:text-foreground/80"
-                >
-                  {l.label}
-                  <span className="absolute -bottom-1 left-0 h-[2px] w-0 rounded-full bg-primary transition-all duration-300 ease-out group-hover:w-full" />
-                </motion.a>
-              </li>
-            ))}
+            {links.map((l) => {
+              const isActive = activeSection === l.href.replace("#", "");
+              return (
+                <li key={l.href}>
+                  <motion.a
+                    whileHover={{ y: -2 }}
+                    whileTap={{ y: 0 }}
+                    transition={{ duration: 0.2 }}
+                    href={l.href}
+                    className={`group relative inline-block text-xs font-semibold uppercase tracking-[0.18em] transition-colors ${
+                      isActive
+                        ? "text-foreground"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {l.label}
+                    <span
+                      className={`absolute -bottom-1 left-0 h-[2px] rounded-full bg-primary transition-all duration-300 ease-out ${
+                        isActive ? "w-full" : "w-0 group-hover:w-full"
+                      }`}
+                    />
+                  </motion.a>
+                </li>
+              );
+            })}
           </ul>
 
           <motion.button

@@ -1,5 +1,6 @@
 import { Preloader } from "@/components/portfolio/Preloader";
 import { ScrollProgress } from "@/components/portfolio/ScrollProgress";
+import { SmoothScroll } from "@/components/portfolio/SmoothScroll";
 import { AmbientBackground } from "@/components/portfolio/AmbientBackground";
 import { Navbar } from "@/components/portfolio/Navbar";
 import { Hero } from "@/components/portfolio/Hero";
@@ -13,7 +14,7 @@ import { Footer } from "@/components/portfolio/Footer";
 
 export default function HomePage() {
   return (
-    <>
+    <SmoothScroll>
       <Preloader />
       <ScrollProgress />
       <AmbientBackground />
@@ -28,6 +29,6 @@ export default function HomePage() {
         <Contact />
         <Footer />
       </main>
-    </>
+    </SmoothScroll>
   );
 }
