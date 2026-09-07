@@ -292,14 +292,7 @@ export default function AdminDashboard() {
   ];
 
   if (isAuthenticated === null) {
-    return (
-      <div className="grid min-h-screen place-items-center bg-background text-foreground">
-        <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground">
-          <Loader2 className="h-4 w-4 animate-spin text-emerald-500" />
-          <span>VERIFYING ACCESS...</span>
-        </div>
-      </div>
-    );
+    return <div className="min-h-screen bg-background" />;
   }
 
   if (isAuthenticated === false) {
