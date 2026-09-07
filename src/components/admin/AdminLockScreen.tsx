@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
 import { toast } from "sonner";
 
 interface AdminLockScreenProps {
@@ -11,33 +10,27 @@ interface AdminLockScreenProps {
 export function AdminLockScreen({ onAuthenticated }: AdminLockScreenProps) {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [shake, setShake] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Auto-focus immediately and keep focused whenever user clicks anywhere on screen
+  // Auto-focus immediately and ensure clicking anywhere on screen keeps focus
   useEffect(() => {
     inputRef.current?.focus();
 
-    const handleGlobalClick = () => {
+    const handleFocus = () => {
       inputRef.current?.focus();
     };
 
-    const handleGlobalKeyDown = () => {
-      inputRef.current?.focus();
-    };
-
-    window.addEventListener("click", handleGlobalClick);
-    window.addEventListener("keydown", handleGlobalKeyDown);
+    window.addEventListener("click", handleFocus);
+    window.addEventListener("keydown", handleFocus);
 
     return () => {
-      window.removeEventListener("click", handleGlobalClick);
-      window.removeEventListener("keydown", handleGlobalKeyDown);
+      window.removeEventListener("click", handleFocus);
+      window.removeEventListener("keydown", handleFocus);
     };
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!password.trim() || isLoading) return;
+  const handleVerify = async (enteredPassword: string) => {
+    if (!enteredPassword.trim() || isLoading) return;
 
     setIsLoading(true);
 
@@ -45,7 +38,7 @@ export function AdminLockScreen({ onAuthenticated }: AdminLockScreenProps) {
       const res = await fetch("/api/admin/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: password.trim() }),
+        body: JSON.stringify({ password: enteredPassword.trim() }),
       });
 
       const data = await res.json();
@@ -55,17 +48,18 @@ export function AdminLockScreen({ onAuthenticated }: AdminLockScreenProps) {
         toast.success("Unlocked.");
         onAuthenticated(data.token);
       } else {
-        setShake(true);
-        setTimeout(() => setShake(false), 450);
         setPassword("");
       }
     } catch {
-      setShake(true);
-      setTimeout(() => setShake(false), 450);
       setPassword("");
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleVerify(password);
   };
 
   return (
@@ -73,28 +67,22 @@ export function AdminLockScreen({ onAuthenticated }: AdminLockScreenProps) {
       className="fixed inset-0 z-[9999] flex h-screen w-screen cursor-default items-center justify-center bg-background select-none overflow-hidden"
       onClick={() => inputRef.current?.focus()}
     >
-      {/* Completely Blank Stealth Screen - Only an unobtrusive minimalist input centered */}
-      <motion.form
-        onSubmit={handleSubmit}
-        animate={shake ? { x: [-10, 10, -8, 8, -4, 4, 0] } : { x: 0 }}
-        transition={{ duration: 0.4 }}
-        className="flex flex-col items-center"
-      >
-        <div className="relative">
-          <input
-            ref={inputRef}
-            type="password"
-            autoFocus
-            autoComplete="off"
-            spellCheck={false}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            disabled={isLoading}
-            placeholder="••••••••"
-            className="h-11 w-56 sm:w-64 rounded-2xl border border-border/40 bg-card/20 px-4 text-center text-sm font-mono tracking-[0.35em] text-foreground placeholder:text-muted-foreground/25 transition-all duration-300 focus:border-border/80 focus:bg-card/50 focus:outline-hidden focus:ring-1 focus:ring-border/60 disabled:opacity-50"
-          />
-        </div>
-      </motion.form>
+      {/* 100% Pure Blank Screen - Zero visible box, zero border, zero placeholder dots */}
+      <form onSubmit={handleSubmit} className="m-0 p-0">
+        <input
+          ref={inputRef}
+          type="password"
+          autoFocus
+          autoComplete="off"
+          spellCheck={false}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          disabled={isLoading}
+          tabIndex={1}
+          aria-label="auth"
+          className="fixed top-0 left-0 h-px w-px opacity-0 border-0 p-0 m-0 outline-hidden -z-10 bg-transparent caret-transparent text-transparent select-none cursor-default"
+        />
+      </form>
     </div>
   );
 }
