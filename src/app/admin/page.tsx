@@ -29,12 +29,15 @@ import {
   RefreshCw,
   Github,
   Flame,
+  Lock,
+  LogOut,
 } from "lucide-react";
 import { usePortfolio } from "@/context/PortfolioContext";
 import type { PortfolioData } from "@/data/portfolioDefaults";
 import { autoCutImage } from "@/utils/autoCutout";
 import { AvatarCard3D } from "@/components/portfolio/AvatarCard3D";
 import { Activity } from "@/components/portfolio/Activity";
+import { AdminLockScreen } from "@/components/admin/AdminLockScreen";
 
 type TabKey = "hero" | "about" | "skills" | "project" | "activity" | "certification" | "contact";
 
@@ -51,6 +54,47 @@ export default function AdminDashboard() {
   const [activityPreview, setActivityPreview] = useState<any>(null);
   const [isSyncingActivity, setIsSyncingActivity] = useState(false);
   const [hasInitializedData, setHasInitializedData] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  // Check existing session token on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      // 1. Fast local session token check
+      const localToken = sessionStorage.getItem("admin_auth_token");
+      if (localToken === "bbf30c70edfabaa2b35e7da106ad810724e4e3baebb45049a10b2990a66d55dd") {
+        setIsAuthenticated(true);
+        return;
+      }
+
+      // 2. Server session cookie check
+      try {
+        const res = await fetch("/api/admin/auth");
+        const d = await res.json();
+        if (d.authenticated && d.token) {
+          sessionStorage.setItem("admin_auth_token", d.token);
+          setIsAuthenticated(true);
+          return;
+        }
+      } catch {
+        // ignore network error
+      }
+
+      setIsAuthenticated(false);
+    };
+
+    checkAuth();
+  }, []);
+
+  const handleLogout = async () => {
+    sessionStorage.removeItem("admin_auth_token");
+    try {
+      await fetch("/api/admin/auth", { method: "DELETE" });
+    } catch {
+      // ignore
+    }
+    setIsAuthenticated(false);
+    toast.info("Admin dashboard locked.");
+  };
 
   useEffect(() => {
     if (!hasInitializedData && data) {
@@ -247,6 +291,21 @@ export default function AdminDashboard() {
     { id: "contact", label: "Contact & Socials", icon: Send },
   ];
 
+  if (isAuthenticated === null) {
+    return (
+      <div className="grid min-h-screen place-items-center bg-background text-foreground">
+        <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin text-emerald-500" />
+          <span>VERIFYING ACCESS...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (isAuthenticated === false) {
+    return <AdminLockScreen onAuthenticated={() => setIsAuthenticated(true)} />;
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground pb-20 selection:bg-foreground selection:text-background">
       {/* Top Header */}
@@ -308,6 +367,16 @@ export default function AdminDashboard() {
               <span className="hidden sm:inline">Preview</span>
               <ExternalLink className="h-3.5 w-3.5" />
             </Link>
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="inline-flex items-center gap-1.5 rounded-full border border-border/80 px-3 py-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:border-rose-500/40 hover:bg-rose-500/10 hover:text-rose-400 cursor-pointer"
+              title="Lock Admin Session"
+            >
+              <Lock className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Lock</span>
+            </button>
 
             <motion.button
               whileTap={{ scale: 0.96 }}
