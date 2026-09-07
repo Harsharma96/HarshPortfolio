@@ -137,48 +137,51 @@ export function Preloader() {
             {(phase === "name" || phase === "exit") && (
               <motion.div
                 key="name-phase"
-                initial={{ opacity: 0, y: 25 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                className="flex flex-col items-center text-center px-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                className="relative flex flex-1 flex-col items-center justify-center text-center w-full px-2"
               >
-                {/* Greeting / Intro Tag */}
+                {/* Full-Page Dynamic Radial Ambient Glow */}
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1, duration: 0.4 }}
-                  className="flex items-center gap-2 text-[10px] sm:text-xs font-mono uppercase tracking-[0.3em] text-muted-foreground mb-2"
+                  initial={{ scale: 0.6, opacity: 0 }}
+                  animate={{ scale: 1.4, opacity: 1 }}
+                  transition={{ duration: 1.4, ease: "easeOut" }}
+                  className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center"
                 >
-                  <span className="text-emerald-500 font-bold">&gt;_</span>
-                  <span>WELCOME TO THE PORTFOLIO OF</span>
+                  <div className="h-[500px] w-[500px] sm:h-[700px] sm:w-[700px] rounded-full bg-gradient-to-r from-emerald-500/25 via-sky-500/20 to-primary/25 blur-[120px] sm:blur-[160px]" />
                 </motion.div>
 
-                {/* Full Name in Grand Display Typography */}
-                <motion.h1
-                  initial={{ opacity: 0, scale: 0.9, letterSpacing: "0.05em" }}
-                  animate={{ opacity: 1, scale: 1, letterSpacing: "-0.02em" }}
-                  transition={{ delay: 0.2, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-                  className="font-[family-name:var(--font-display)] text-4xl xs:text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-foreground via-foreground/95 to-muted-foreground drop-shadow-xs leading-[1.05]"
-                >
-                  HARSH SHARMA
-                </motion.h1>
-
-                {/* Subtitle Role Badge */}
+                {/* Minimalist Tech Kicker */}
                 <motion.div
-                  initial={{ opacity: 0, y: 15 }}
+                  initial={{ opacity: 0, y: -12 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.45, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                  className="mt-4 sm:mt-6 inline-flex items-center gap-2.5 rounded-full border border-border/80 bg-secondary/60 px-4 py-1.5 shadow-2xs backdrop-blur-md"
+                  transition={{ delay: 0.1, duration: 0.5 }}
+                  className="flex items-center gap-2 text-[10px] sm:text-xs font-mono uppercase tracking-[0.35em] text-muted-foreground mb-3 sm:mb-6"
                 >
-                  <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-                  </span>
-                  <span className="font-mono text-[10px] sm:text-xs font-bold uppercase tracking-widest text-foreground">
-                    .NET Developer &amp; Software Architect
-                  </span>
-                  <span className="text-emerald-500 text-xs">✦</span>
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping" />
+                  <span>&gt;_ PORTFOLIO OF</span>
                 </motion.div>
+
+                {/* Full Page Monumental Display Typography (HARSH SHARMA) */}
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-4 md:gap-7 overflow-hidden select-none w-full">
+                  {["HARSH", "SHARMA"].map((word, wordIndex) => (
+                    <div key={word} className="overflow-hidden">
+                      <motion.span
+                        initial={{ y: "115%", opacity: 0, rotateX: 30 }}
+                        animate={{ y: "0%", opacity: 1, rotateX: 0 }}
+                        transition={{
+                          duration: 0.95,
+                          delay: 0.18 + wordIndex * 0.15,
+                          ease: [0.16, 1, 0.3, 1],
+                        }}
+                        className="inline-block font-[family-name:var(--font-display)] text-5xl xs:text-6xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[11rem] 2xl:text-[13rem] font-black uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-foreground via-foreground/95 to-foreground/70 leading-[0.95] drop-shadow-[0_20px_50px_rgba(0,0,0,0.35)]"
+                      >
+                        {word}
+                      </motion.span>
+                    </div>
+                  ))}
+                </div>
               </motion.div>
             )}
           </div>
