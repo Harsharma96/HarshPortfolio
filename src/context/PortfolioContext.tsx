@@ -56,7 +56,19 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
           about: { ...defaultPortfolioData.about, ...parsed.about },
           skills: { ...defaultPortfolioData.skills, ...parsed.skills },
           project: { ...defaultPortfolioData.project, ...parsed.project },
-          activity: { ...defaultPortfolioData.activity, ...(parsed.activity || {}) },
+          activity: {
+            ...defaultPortfolioData.activity,
+            ...(parsed.activity || {}),
+            leetcodeUsername:
+              !parsed.activity?.leetcodeUsername ||
+              parsed.activity?.leetcodeUsername === "Harsh200509"
+                ? defaultPortfolioData.activity.leetcodeUsername
+                : parsed.activity.leetcodeUsername,
+            githubUsername:
+              !parsed.activity?.githubUsername
+                ? defaultPortfolioData.activity.githubUsername
+                : parsed.activity.githubUsername,
+          },
           certification: { ...defaultPortfolioData.certification, ...parsed.certification },
           contact: {
             ...defaultPortfolioData.contact,

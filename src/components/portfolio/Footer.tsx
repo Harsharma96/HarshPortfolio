@@ -140,23 +140,12 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Bottom Bar: Copyright & Tech Stack */}
-          <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-border/80 pt-4 sm:pt-5 text-xs text-muted-foreground">
-            <div className="flex items-center gap-2 text-[11px] sm:text-xs">
-              <span>© 2026 {hero.name}</span>
+          {/* Bottom Bar: Clean Copyright */}
+          <div className="mt-8 border-t border-border/80 pt-5 sm:pt-6">
+            <div className="flex items-center gap-2 text-[11px] sm:text-xs text-muted-foreground font-mono">
+              <span>© {new Date().getFullYear()} {hero.name}</span>
               <span className="text-border">•</span>
               <span>All rights reserved</span>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-1.5 font-mono text-[10px] sm:text-xs">
-              <span className="text-muted-foreground">Built with</span>
-              <span className="inline-flex items-center rounded-md border border-border/80 bg-secondary/60 px-1.5 py-0.5 text-[10px] font-semibold text-foreground">
-                .NET
-              </span>
-              <span className="text-muted-foreground">&amp;</span>
-              <span className="inline-flex items-center rounded-md border border-border/80 bg-secondary/60 px-1.5 py-0.5 text-[10px] font-semibold text-foreground">
-                Next.js
-              </span>
             </div>
           </div>
         </Card>

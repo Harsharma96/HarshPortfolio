@@ -141,7 +141,7 @@ export const defaultPortfolioData: PortfolioData = {
     ],
   },
   project: {
-    kicker: "03 — Projects",
+    kicker: "04 — Projects",
     heading: "Selected work",
     title: "FoodEat",
     subtitle: "Food Ordering Web Application",
@@ -160,13 +160,13 @@ export const defaultPortfolioData: PortfolioData = {
     ],
   },
   activity: {
-    kicker: "SYSTEM ACTIVITY",
+    kicker: "03 — Activity",
     heading: "Code Frequency & Problem Solving",
-    leetcodeUsername: "Harsh200509",
+    leetcodeUsername: "Harsharma9675",
     githubUsername: "Harsharma96",
   },
   certification: {
-    kicker: "04 — Credentials",
+    kicker: "05 — Credentials",
     heading: "Certification",
     certTitle: "Artificial Intelligence for Intermediate",
     meta: "IBM SkillsBuild / 3C · July 2026",

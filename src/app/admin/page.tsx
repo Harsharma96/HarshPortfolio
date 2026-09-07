@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -28,6 +28,7 @@ import {
   Activity as ActivityIcon,
   RefreshCw,
   Github,
+  Flame,
 } from "lucide-react";
 import { usePortfolio } from "@/context/PortfolioContext";
 import type { PortfolioData } from "@/data/portfolioDefaults";
@@ -49,11 +50,19 @@ export default function AdminDashboard() {
   });
   const [activityPreview, setActivityPreview] = useState<any>(null);
   const [isSyncingActivity, setIsSyncingActivity] = useState(false);
+  const [hasInitializedData, setHasInitializedData] = useState(false);
+
+  useEffect(() => {
+    if (!hasInitializedData && data) {
+      setFormData(data);
+      setHasInitializedData(true);
+    }
+  }, [data, hasInitializedData]);
 
   const fetchLiveActivity = async (leetUser?: string, gitUser?: string, refresh = false) => {
     setIsSyncingActivity(true);
     try {
-      const lu = leetUser || formData.activity?.leetcodeUsername || "Harsh200509";
+      const lu = leetUser || formData.activity?.leetcodeUsername || "Harsharma9675";
       const gu = gitUser || formData.activity?.githubUsername || "Harsharma96";
       const res = await fetch(
         `/api/activity?leetcode=${encodeURIComponent(lu)}&github=${encodeURIComponent(gu)}${
@@ -65,9 +74,11 @@ export default function AdminDashboard() {
         setActivityPreview(d);
         if (refresh) {
           toast.success(
-            `Live Connected! LeetCode (${d.leetcode.totalSolved} solved) & GitHub (${d.github.totalContributions} commits).`
+            `Live Connected! LeetCode (${d.leetcode.totalSolved} solved, rank #${d.leetcode.ranking?.toLocaleString()}) & GitHub (${d.github.totalContributions} commits).`
           );
         }
+      } else {
+        toast.error(d.message || "Failed to fetch live activity.");
       }
     } catch (err) {
       toast.error("Failed to fetch live activity. Using cached fallback.");
@@ -81,6 +92,71 @@ export default function AdminDashboard() {
       fetchLiveActivity();
     }
   }, [activeTab]);
+
+  // Debounced auto-fetch when typing or changing username in the input
+  useEffect(() => {
+    if (activeTab !== "activity") return;
+    const timer = setTimeout(() => {
+      const lu = formData.activity?.leetcodeUsername?.trim();
+      const gu = formData.activity?.githubUsername?.trim();
+      if (lu || gu) {
+        fetchLiveActivity(lu, gu, false);
+      }
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [formData.activity?.leetcodeUsername, formData.activity?.githubUsername, activeTab]);
+
+  // Real stats & Green dots computation for Admin cards
+  const leetStats = activityPreview?.leetcode;
+  const leetTotalSolved: number = Number(leetStats?.totalSolved ?? 173);
+  const leetEasySolved: number = Number(leetStats?.easySolved ?? 45);
+  const leetTotalEasy: number = Number(leetStats?.totalEasy ?? 963);
+  const leetMediumSolved: number = Number(leetStats?.mediumSolved ?? 108);
+  const leetTotalMedium: number = Number(leetStats?.totalMedium ?? 2111);
+  const leetHardSolved: number = Number(leetStats?.hardSolved ?? 20);
+  const leetTotalHard: number = Number(leetStats?.totalHard ?? 972);
+  const leetRanking: string = leetStats?.ranking ? `#${leetStats.ranking.toLocaleString()}` : "#992,804";
+  const leetCalendar: Record<string, number> = (leetStats?.submissionCalendar as Record<string, number>) || {};
+  const leetActiveDays: number = Object.keys(leetCalendar).length || 166;
+  const leetSubmissionsTotal: number =
+    Object.values(leetCalendar).reduce<number>((acc, v) => acc + Number(v), 0) || 227;
+
+  // Real 180-day mini green dots matrix for admin connection card
+  const leetAdminDots: Array<Array<{ date: string; count: number }>> = useMemo(() => {
+    const cal = leetCalendar;
+    const countByDate = new Map<string, number>();
+    for (const [secStr, count] of Object.entries(cal)) {
+      const dStr = new Date(Number(secStr) * 1000).toISOString().split("T")[0];
+      countByDate.set(dStr, (countByDate.get(dStr) || 0) + Number(count));
+    }
+    const today = new Date();
+    const days: Array<{ date: string; count: number }> = [];
+    for (let i = 179; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      const k = d.toISOString().split("T")[0];
+      days.push({ date: k, count: countByDate.get(k) || 0 });
+    }
+    const cols: Array<Array<{ date: string; count: number }>> = [];
+    for (let c = 0; c < 36; c++) {
+      cols.push(days.slice(c * 5, (c + 1) * 5));
+    }
+    return cols;
+  }, [leetCalendar]);
+
+  const gitStats = activityPreview?.github;
+  const gitCommits: number = Number(gitStats?.totalContributions ?? 116);
+  const gitContributionsList: Array<{ date: string; count: number; level: number }> =
+    (gitStats?.contributions as Array<{ date: string; count: number; level: number }>) || [];
+  const gitActiveDays: number = gitContributionsList.filter((d) => d.count > 0).length || 65;
+  const gitAdminDots: Array<Array<{ date: string; count: number; level: number }>> = useMemo(() => {
+    const slice = gitContributionsList.slice(-180);
+    const cols: Array<Array<{ date: string; count: number; level: number }>> = [];
+    for (let i = 0; i < slice.length; i += 5) {
+      cols.push(slice.slice(i, i + 5));
+    }
+    return cols.slice(-36);
+  }, [gitContributionsList]);
 
   const handleAvatarAutoCut = async (fileOrUrl: File | string) => {
     setIsCutting(true);
@@ -1253,160 +1329,332 @@ export default function AdminDashboard() {
                   {/* Account Connection Cards */}
                   <div className="mt-6 grid gap-6 md:grid-cols-2">
                     {/* LeetCode Connection Box */}
-                    <div className="rounded-2xl border border-border/90 bg-secondary/20 p-5">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2.5">
-                          <div className="grid h-9 w-9 place-items-center rounded-xl bg-[#FFA116]/15 text-[#FFA116]">
-                            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                              <path
-                                d="M13.483 0a1.374 1.374 0 0 0-.961.438L7.116 6.226l-3.854 4.126a5.266 5.266 0 0 0-1.209 2.104 5.35 5.35 0 0 0-.125.513 5.527 5.527 0 0 0 .062 2.362 5.83 5.83 0 0 0 .349 1.017 5.938 5.938 0 0 0 1.271 1.818l4.277 4.193.039.038c2.248 2.165 5.852 2.133 8.063-.074l2.396-2.392c.54-.54.54-1.414.003-1.955a1.378 1.378 0 0 0-1.951-.003l-2.396 2.392a3.021 3.021 0 0 1-4.205.038l-.02-.019-4.276-4.193c-.652-.64-.972-1.469-.948-2.263a2.68 2.68 0 0 1 .066-.523 2.545 2.545 0 0 1 .619-1.164L9.13 8.114c1.058-1.134 3.204-1.27 4.43-.278l3.501 2.831c.593.48 1.461.387 1.94-.207a1.384 1.384 0 0 0-.207-1.943l-3.5-2.831c-.8-.647-1.766-1.045-2.774-1.202l2.015-2.158A1.384 1.384 0 0 0 13.483 0zm-2.866 12.815a1.38 1.38 0 0 0-1.38 1.382 1.38 1.38 0 0 0 1.38 1.382H20.79a1.38 1.38 0 0 0 1.38-1.382 1.38 1.38 0 0 0-1.38-1.382z"
-                                fill="#FFA116"
+                    <div className="rounded-2xl border border-border/90 bg-secondary/20 p-5 flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2.5">
+                            <div className="grid h-9 w-9 place-items-center rounded-xl bg-[#FFA116]/15 text-[#FFA116]">
+                              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                  d="M13.483 0a1.374 1.374 0 0 0-.961.438L7.116 6.226l-3.854 4.126a5.266 5.266 0 0 0-1.209 2.104 5.35 5.35 0 0 0-.125.513 5.527 5.527 0 0 0 .062 2.362 5.83 5.83 0 0 0 .349 1.017 5.938 5.938 0 0 0 1.271 1.818l4.277 4.193.039.038c2.248 2.165 5.852 2.133 8.063-.074l2.396-2.392c.54-.54.54-1.414.003-1.955a1.378 1.378 0 0 0-1.951-.003l-2.396 2.392a3.021 3.021 0 0 1-4.205.038l-.02-.019-4.276-4.193c-.652-.64-.972-1.469-.948-2.263a2.68 2.68 0 0 1 .066-.523 2.545 2.545 0 0 1 .619-1.164L9.13 8.114c1.058-1.134 3.204-1.27 4.43-.278l3.501 2.831c.593.48 1.461.387 1.94-.207a1.384 1.384 0 0 0-.207-1.943l-3.5-2.831c-.8-.647-1.766-1.045-2.774-1.202l2.015-2.158A1.384 1.384 0 0 0 13.483 0zm-2.866 12.815a1.38 1.38 0 0 0-1.38 1.382 1.38 1.38 0 0 0 1.38 1.382H20.79a1.38 1.38 0 0 0 1.38-1.382 1.38 1.38 0 0 0-1.38-1.382z"
+                                  fill="#FFA116"
+                                />
+                              </svg>
+                            </div>
+                            <div>
+                              <h3 className="text-sm font-bold text-foreground">LeetCode Connection</h3>
+                              <span className="text-[10px] text-muted-foreground">Algorithm &amp; Problem Solving</span>
+                            </div>
+                          </div>
+
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-500">
+                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            {isSyncingActivity ? "Syncing..." : `Live Connected • ${leetRanking}`}
+                          </span>
+                        </div>
+
+                        {/* Input Row with Sync Button */}
+                        <div className="mt-4">
+                          <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                            LeetCode Username
+                          </label>
+                          <div className="mt-1.5 flex gap-2">
+                            <input
+                              type="text"
+                              value={formData.activity?.leetcodeUsername || ""}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  activity: {
+                                    ...formData.activity,
+                                    leetcodeUsername: e.target.value,
+                                  },
+                                })
+                              }
+                              placeholder="e.g. Harsharma9675"
+                              className="flex-1 rounded-xl border border-border bg-secondary/50 px-3.5 py-2 font-mono text-sm font-medium outline-none focus:border-foreground"
+                            />
+                            <button
+                              type="button"
+                              onClick={() =>
+                                fetchLiveActivity(
+                                  formData.activity?.leetcodeUsername,
+                                  formData.activity?.githubUsername,
+                                  true
+                                )
+                              }
+                              disabled={isSyncingActivity}
+                              className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-3 py-2 text-xs font-bold text-foreground hover:bg-secondary cursor-pointer transition-all"
+                            >
+                              <RefreshCw
+                                className={`h-3.5 w-3.5 ${isSyncingActivity ? "animate-spin text-[#FFA116]" : ""}`}
                               />
-                            </svg>
+                              <span className="hidden sm:inline">Verify</span>
+                            </button>
                           </div>
+
+                          <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+                            <a
+                              href={`https://leetcode.com/u/${formData.activity?.leetcodeUsername || "Harsharma9675"}/`}
+                              target="_blank"
+                              rel="noreferrer noopener"
+                              className="inline-flex items-center gap-1 text-[#FFA116] hover:underline"
+                            >
+                              <span>Open LeetCode Profile</span>
+                              <ExternalLink className="h-3 w-3" />
+                            </a>
+                            <span className="font-mono text-[10px]">API: Official LeetCode GraphQL</span>
+                          </div>
+                        </div>
+
+                        {/* Real Stats Preview Pill Grid */}
+                        <div className="mt-4 grid grid-cols-4 gap-2 border-t border-border/60 pt-3.5 text-center">
+                          <div className="rounded-xl border border-border/80 bg-card p-2">
+                            <span className="block font-mono text-xs font-black text-foreground">
+                              {leetTotalSolved}
+                            </span>
+                            <span className="block text-[9px] font-mono text-muted-foreground uppercase">Solved</span>
+                          </div>
+                          <div className="rounded-xl border border-border/80 bg-card p-2">
+                            <span className="block font-mono text-xs font-black text-emerald-500">
+                              {leetEasySolved}
+                            </span>
+                            <span className="block text-[9px] font-mono text-muted-foreground uppercase">Easy</span>
+                          </div>
+                          <div className="rounded-xl border border-border/80 bg-card p-2">
+                            <span className="block font-mono text-xs font-black text-amber-500">
+                              {leetMediumSolved}
+                            </span>
+                            <span className="block text-[9px] font-mono text-muted-foreground uppercase">Med</span>
+                          </div>
+                          <div className="rounded-xl border border-border/80 bg-card p-2">
+                            <span className="block font-mono text-xs font-black text-rose-500">
+                              {leetHardSolved}
+                            </span>
+                            <span className="block text-[9px] font-mono text-muted-foreground uppercase">Hard</span>
+                          </div>
+                        </div>
+
+                        {/* Real Progress Breakdown Bars */}
+                        <div className="mt-3.5 space-y-2 rounded-xl border border-border/60 bg-card/60 p-3">
+                          <div className="flex justify-between items-center text-[10px] font-mono">
+                            <span className="text-muted-foreground font-semibold">Real Difficulty Progress</span>
+                            <span className="text-foreground font-bold">Rank {leetRanking}</span>
+                          </div>
+                          {/* Easy */}
                           <div>
-                            <h3 className="text-sm font-bold text-foreground">LeetCode Connection</h3>
-                            <span className="text-[10px] text-muted-foreground">Algorithm &amp; Problem Solving</span>
+                            <div className="flex justify-between text-[10px] font-mono mb-0.5">
+                              <span className="text-emerald-500 font-semibold">Easy</span>
+                              <span className="text-muted-foreground">
+                                <strong className="text-foreground">{leetEasySolved}</strong> / {leetTotalEasy} (
+                                {Math.round((leetEasySolved / Math.max(1, leetTotalSolved)) * 100)}%)
+                              </span>
+                            </div>
+                            <div className="h-1.5 w-full rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+                              <div
+                                className="h-full rounded-full bg-emerald-500 transition-all duration-500"
+                                style={{ width: `${(leetEasySolved / Math.max(1, leetTotalSolved)) * 100}%` }}
+                              />
+                            </div>
+                          </div>
+                          {/* Medium */}
+                          <div>
+                            <div className="flex justify-between text-[10px] font-mono mb-0.5">
+                              <span className="text-amber-500 font-semibold">Medium</span>
+                              <span className="text-muted-foreground">
+                                <strong className="text-foreground">{leetMediumSolved}</strong> / {leetTotalMedium} (
+                                {Math.round((leetMediumSolved / Math.max(1, leetTotalSolved)) * 100)}%)
+                              </span>
+                            </div>
+                            <div className="h-1.5 w-full rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+                              <div
+                                className="h-full rounded-full bg-amber-500 transition-all duration-500"
+                                style={{ width: `${(leetMediumSolved / Math.max(1, leetTotalSolved)) * 100}%` }}
+                              />
+                            </div>
+                          </div>
+                          {/* Hard */}
+                          <div>
+                            <div className="flex justify-between text-[10px] font-mono mb-0.5">
+                              <span className="text-rose-500 font-semibold">Hard</span>
+                              <span className="text-muted-foreground">
+                                <strong className="text-foreground">{leetHardSolved}</strong> / {leetTotalHard} (
+                                {Math.round((leetHardSolved / Math.max(1, leetTotalSolved)) * 100)}%)
+                              </span>
+                            </div>
+                            <div className="h-1.5 w-full rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+                              <div
+                                className="h-full rounded-full bg-rose-500 transition-all duration-500"
+                                style={{ width: `${(leetHardSolved / Math.max(1, leetTotalSolved)) * 100}%` }}
+                              />
+                            </div>
                           </div>
                         </div>
 
-                        <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-500">
-                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                          Live Connected
-                        </span>
-                      </div>
-
-                      <div className="mt-4">
-                        <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                          LeetCode Username
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.activity?.leetcodeUsername || ""}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              activity: {
-                                ...formData.activity,
-                                leetcodeUsername: e.target.value,
-                              },
-                            })
-                          }
-                          placeholder="e.g. Harsh200509"
-                          className="mt-1.5 w-full rounded-xl border border-border bg-secondary/50 px-3.5 py-2.5 font-mono text-sm font-medium outline-none focus:border-foreground"
-                        />
-                        <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
-                          <a
-                            href={`https://leetcode.com/u/${formData.activity?.leetcodeUsername || "Harsh200509"}/`}
-                            target="_blank"
-                            rel="noreferrer noopener"
-                            className="inline-flex items-center gap-1 text-[#FFA116] hover:underline"
-                          >
-                            <span>Open LeetCode Profile</span>
-                            <ExternalLink className="h-3 w-3" />
-                          </a>
-                          <span className="font-mono text-[10px]">API: Alfa GraphQL Proxy</span>
-                        </div>
-                      </div>
-
-                      {/* Live Stats Preview Pill Grid */}
-                      <div className="mt-4 grid grid-cols-4 gap-2 border-t border-border/60 pt-3.5 text-center">
-                        <div className="rounded-xl border border-border/80 bg-card p-2">
-                          <span className="block font-mono text-xs font-black text-foreground">
-                            {activityPreview?.leetcode?.totalSolved ?? 11}
-                          </span>
-                          <span className="block text-[9px] font-mono text-muted-foreground uppercase">Solved</span>
-                        </div>
-                        <div className="rounded-xl border border-border/80 bg-card p-2">
-                          <span className="block font-mono text-xs font-black text-emerald-500">
-                            {activityPreview?.leetcode?.easySolved ?? 5}
-                          </span>
-                          <span className="block text-[9px] font-mono text-muted-foreground uppercase">Easy</span>
-                        </div>
-                        <div className="rounded-xl border border-border/80 bg-card p-2">
-                          <span className="block font-mono text-xs font-black text-amber-500">
-                            {activityPreview?.leetcode?.mediumSolved ?? 6}
-                          </span>
-                          <span className="block text-[9px] font-mono text-muted-foreground uppercase">Med</span>
-                        </div>
-                        <div className="rounded-xl border border-border/80 bg-card p-2">
-                          <span className="block font-mono text-xs font-black text-rose-500">
-                            {activityPreview?.leetcode?.hardSolved ?? 0}
-                          </span>
-                          <span className="block text-[9px] font-mono text-muted-foreground uppercase">Hard</span>
+                        {/* Real Green Dots Submission Calendar */}
+                        <div className="mt-3.5 rounded-xl border border-border/60 bg-card/60 p-3">
+                          <div className="flex justify-between items-center text-[10px] font-mono mb-1.5">
+                            <span className="flex items-center gap-1 text-emerald-500 font-bold">
+                              <Flame className="h-3 w-3" />
+                              Real Activity: {leetActiveDays} Active Days ({leetSubmissionsTotal} submissions)
+                            </span>
+                            <span className="text-muted-foreground text-[9px]">Last 180 Days</span>
+                          </div>
+                          <div className="overflow-x-auto scrollbar-none py-1">
+                            <div className="flex gap-[3px] min-w-[280px]">
+                              {leetAdminDots.map((col, cIdx) => (
+                                <div key={cIdx} className="flex flex-col gap-[3px]">
+                                  {col.map((d, rIdx) => {
+                                    let bg = "bg-zinc-200 dark:bg-zinc-800/80";
+                                    if (d.count >= 5) bg = "bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]";
+                                    else if (d.count >= 2) bg = "bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.5)]";
+                                    else if (d.count >= 1) bg = "bg-emerald-600/90 dark:bg-emerald-600";
+                                    return (
+                                      <div
+                                        key={rIdx}
+                                        className={`h-[7px] w-[7px] rounded-[1px] transition-transform hover:scale-150 cursor-pointer ${bg}`}
+                                        title={`${d.date}: ${d.count} problem${d.count === 1 ? "" : "s"} submitted`}
+                                      />
+                                    );
+                                  })}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="mt-1 flex justify-between text-[8px] font-mono text-muted-foreground">
+                            <span>March 2026</span>
+                            <span>Today (Live Verified)</span>
+                          </div>
                         </div>
                       </div>
                     </div>
 
                     {/* GitHub Connection Box */}
-                    <div className="rounded-2xl border border-border/90 bg-secondary/20 p-5">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2.5">
-                          <div className="grid h-9 w-9 place-items-center rounded-xl bg-foreground/10 text-foreground">
-                            <Github className="h-5 w-5" />
+                    <div className="rounded-2xl border border-border/90 bg-secondary/20 p-5 flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2.5">
+                            <div className="grid h-9 w-9 place-items-center rounded-xl bg-foreground/10 text-foreground">
+                              <Github className="h-5 w-5" />
+                            </div>
+                            <div>
+                              <h3 className="text-sm font-bold text-foreground">GitHub Connection</h3>
+                              <span className="text-[10px] text-muted-foreground">Code Frequency &amp; Heatmap</span>
+                            </div>
                           </div>
-                          <div>
-                            <h3 className="text-sm font-bold text-foreground">GitHub Connection</h3>
-                            <span className="text-[10px] text-muted-foreground">Code Frequency &amp; Heatmap</span>
+
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-500">
+                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            Live Connected
+                          </span>
+                        </div>
+
+                        {/* Input Row with Sync Button */}
+                        <div className="mt-4">
+                          <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                            GitHub Username
+                          </label>
+                          <div className="mt-1.5 flex gap-2">
+                            <input
+                              type="text"
+                              value={formData.activity?.githubUsername || ""}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  activity: {
+                                    ...formData.activity,
+                                    githubUsername: e.target.value,
+                                  },
+                                })
+                              }
+                              placeholder="e.g. Harsharma96"
+                              className="flex-1 rounded-xl border border-border bg-secondary/50 px-3.5 py-2 font-mono text-sm font-medium outline-none focus:border-foreground"
+                            />
+                            <button
+                              type="button"
+                              onClick={() =>
+                                fetchLiveActivity(
+                                  formData.activity?.leetcodeUsername,
+                                  formData.activity?.githubUsername,
+                                  true
+                                )
+                              }
+                              disabled={isSyncingActivity}
+                              className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-3 py-2 text-xs font-bold text-foreground hover:bg-secondary cursor-pointer transition-all"
+                            >
+                              <RefreshCw
+                                className={`h-3.5 w-3.5 ${isSyncingActivity ? "animate-spin text-emerald-500" : ""}`}
+                              />
+                              <span className="hidden sm:inline">Verify</span>
+                            </button>
+                          </div>
+
+                          <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+                            <a
+                              href={`https://github.com/${formData.activity?.githubUsername || "Harsharma96"}`}
+                              target="_blank"
+                              rel="noreferrer noopener"
+                              className="inline-flex items-center gap-1 text-foreground hover:underline"
+                            >
+                              <span>Open GitHub Profile</span>
+                              <ExternalLink className="h-3 w-3" />
+                            </a>
+                            <span className="font-mono text-[10px]">API: GitHub Contribution API (v4)</span>
                           </div>
                         </div>
 
-                        <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-500">
-                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                          Live Connected
-                        </span>
-                      </div>
-
-                      <div className="mt-4">
-                        <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                          GitHub Username
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.activity?.githubUsername || ""}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              activity: {
-                                ...formData.activity,
-                                githubUsername: e.target.value,
-                              },
-                            })
-                          }
-                          placeholder="e.g. Harsharma96"
-                          className="mt-1.5 w-full rounded-xl border border-border bg-secondary/50 px-3.5 py-2.5 font-mono text-sm font-medium outline-none focus:border-foreground"
-                        />
-                        <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
-                          <a
-                            href={`https://github.com/${formData.activity?.githubUsername || "Harsharma96"}`}
-                            target="_blank"
-                            rel="noreferrer noopener"
-                            className="inline-flex items-center gap-1 text-foreground hover:underline"
-                          >
-                            <span>Open GitHub Profile</span>
-                            <ExternalLink className="h-3 w-3" />
-                          </a>
-                          <span className="font-mono text-[10px]">API: jogruber v4</span>
+                        {/* Live Stats Preview Pill Grid */}
+                        <div className="mt-4 grid grid-cols-2 gap-2 border-t border-border/60 pt-3.5 text-center">
+                          <div className="rounded-xl border border-border/80 bg-card p-2">
+                            <span className="block font-mono text-xs font-black text-foreground">
+                              {gitCommits}
+                            </span>
+                            <span className="block text-[9px] font-mono text-muted-foreground uppercase">
+                              Total Commits (Last Year)
+                            </span>
+                          </div>
+                          <div className="rounded-xl border border-border/80 bg-card p-2">
+                            <span className="block font-mono text-xs font-black text-emerald-500">
+                              {gitActiveDays} Active Days
+                            </span>
+                            <span className="block text-[9px] font-mono text-muted-foreground uppercase">
+                              365 Days Tracking
+                            </span>
+                          </div>
                         </div>
-                      </div>
 
-                      {/* Live Stats Preview Pill Grid */}
-                      <div className="mt-4 grid grid-cols-2 gap-2 border-t border-border/60 pt-3.5 text-center">
-                        <div className="rounded-xl border border-border/80 bg-card p-2">
-                          <span className="block font-mono text-xs font-black text-foreground">
-                            {activityPreview?.github?.totalContributions ?? 116}
-                          </span>
-                          <span className="block text-[9px] font-mono text-muted-foreground uppercase">
-                            Total Commits (Last Year)
-                          </span>
-                        </div>
-                        <div className="rounded-xl border border-border/80 bg-card p-2">
-                          <span className="block font-mono text-xs font-black text-emerald-500">
-                            365 Days
-                          </span>
-                          <span className="block text-[9px] font-mono text-muted-foreground uppercase">
-                            Continuous Tracking
-                          </span>
+                        {/* Real GitHub Green Dots Grid */}
+                        <div className="mt-3.5 rounded-xl border border-border/60 bg-card/60 p-3">
+                          <div className="flex justify-between items-center text-[10px] font-mono mb-1.5">
+                            <span className="text-foreground font-bold">Contribution Map Preview</span>
+                            <span className="text-emerald-500 font-semibold">{gitCommits} Commits Recorded</span>
+                          </div>
+                          <div className="overflow-x-auto scrollbar-none py-1">
+                            <div className="flex gap-[3px] min-w-[280px]">
+                              {gitAdminDots.map((col, cIdx) => (
+                                <div key={cIdx} className="flex flex-col gap-[3px]">
+                                  {col.map((d, rIdx) => {
+                                    let bg = "bg-zinc-200 dark:bg-zinc-800/80";
+                                    if (d.level === 1) bg = "bg-emerald-900/70 dark:bg-emerald-950 text-emerald-400 border border-emerald-700/40";
+                                    else if (d.level === 2) bg = "bg-emerald-700 dark:bg-emerald-800";
+                                    else if (d.level === 3) bg = "bg-emerald-500 dark:bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.3)]";
+                                    else if (d.level >= 4) bg = "bg-emerald-400 dark:bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.5)]";
+                                    return (
+                                      <div
+                                        key={rIdx}
+                                        className={`h-[7px] w-[7px] rounded-[1px] transition-transform hover:scale-150 cursor-pointer ${bg}`}
+                                        title={`${d.date}: ${d.count} contribution${d.count === 1 ? "" : "s"}`}
+                                      />
+                                    );
+                                  })}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="mt-1 flex justify-between text-[8px] font-mono text-muted-foreground">
+                            <span>Past Months</span>
+                            <span>Current (Live)</span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1427,7 +1675,7 @@ export default function AdminDashboard() {
                             activity: { ...formData.activity, kicker: e.target.value },
                           })
                         }
-                        placeholder="SYSTEM ACTIVITY"
+                        placeholder="03 — Activity"
                         className="mt-1.5 w-full rounded-xl border border-border bg-secondary/50 px-3.5 py-2.5 text-sm font-medium outline-none focus:border-foreground"
                       />
                     </div>
@@ -1470,7 +1718,7 @@ export default function AdminDashboard() {
                   </div>
 
                   <div className="mt-6">
-                    <Activity />
+                    <Activity overrideActivity={formData.activity} previewStats={activityPreview} />
                   </div>
                 </div>
               </motion.div>
