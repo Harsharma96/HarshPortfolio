@@ -42,18 +42,18 @@ export function Preloader() {
         // Swift transition to "HARSH SHARMA"
         t1 = setTimeout(() => {
           setPhase("name");
-        }, 120);
+        }, 100);
 
-        // Display "HARSH SHARMA" punchily for 750ms before fast exit
+        // Display "HARSH SHARMA" with full animation for 1.45s before smooth exit
         t2 = setTimeout(() => {
           setPhase("exit");
-        }, 900);
+        }, 1550);
 
         // Complete transition and unlock body scroll
         t3 = setTimeout(() => {
           setPhase("done");
           document.body.style.overflow = "unset";
-        }, 1350);
+        }, 2000);
       }
     };
 
@@ -67,6 +67,11 @@ export function Preloader() {
       document.body.style.overflow = "unset";
     };
   }, []);
+
+  const words = [
+    { text: "HARSH", startIndex: 0 },
+    { text: "SHARMA", startIndex: 5 },
+  ];
 
   return (
     <AnimatePresence>
@@ -82,7 +87,7 @@ export function Preloader() {
           }}
           onClick={skipPreloader}
           title="Click to enter portfolio"
-          className="fixed inset-0 z-[99999] flex flex-col justify-between bg-background text-foreground select-none overflow-hidden p-6 sm:p-10 cursor-pointer"
+          className="fixed inset-0 z-[99999] flex flex-col justify-between bg-background text-foreground select-none overflow-hidden p-4 sm:p-8 cursor-pointer"
         >
           {/* Subtle Ambient Background Glow */}
           <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
@@ -94,7 +99,7 @@ export function Preloader() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.5 }}
             className="flex items-center justify-between text-[10px] sm:text-xs font-mono text-muted-foreground tracking-wider uppercase"
           >
             <div className="flex items-center gap-2">
@@ -107,14 +112,14 @@ export function Preloader() {
           </motion.div>
 
           {/* Center Stage: Counter vs Name Reveal */}
-          <div className="flex flex-1 flex-col items-center justify-center my-auto">
+          <div className="flex flex-1 flex-col items-center justify-center my-auto w-full">
             {phase === "counter" && (
               <motion.div
                 key="counter-phase"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.05, filter: "blur(8px)" }}
-                transition={{ duration: 0.45 }}
+                transition={{ duration: 0.35 }}
                 className="flex flex-col items-center"
               >
                 {/* Status Kicker */}
@@ -152,49 +157,67 @@ export function Preloader() {
                 key="name-phase"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
-                className="relative flex flex-1 flex-col items-center justify-center text-center w-full px-2"
+                transition={{ duration: 0.4 }}
+                className="relative flex flex-1 flex-col items-center justify-center text-center w-full max-w-7xl mx-auto px-3 sm:px-6"
               >
                 {/* Full-Page Dynamic Radial Ambient Glow */}
                 <motion.div
                   initial={{ scale: 0.6, opacity: 0 }}
-                  animate={{ scale: 1.4, opacity: 1 }}
-                  transition={{ duration: 1.4, ease: "easeOut" }}
+                  animate={{ scale: 1.3, opacity: 1 }}
+                  transition={{ duration: 1.2, ease: "easeOut" }}
                   className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center"
                 >
-                  <div className="h-[500px] w-[500px] sm:h-[700px] sm:w-[700px] rounded-full bg-gradient-to-r from-emerald-500/25 via-sky-500/20 to-primary/25 blur-[120px] sm:blur-[160px]" />
+                  <div className="h-[400px] w-[400px] sm:h-[600px] sm:w-[600px] rounded-full bg-gradient-to-r from-emerald-500/25 via-sky-500/20 to-primary/25 blur-[120px] sm:blur-[160px]" />
                 </motion.div>
 
                 {/* Minimalist Tech Kicker */}
                 <motion.div
-                  initial={{ opacity: 0, y: -12 }}
+                  initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1, duration: 0.5 }}
-                  className="flex items-center gap-2 text-[10px] sm:text-xs font-mono uppercase tracking-[0.35em] text-muted-foreground mb-3 sm:mb-6"
+                  transition={{ delay: 0.05, duration: 0.4 }}
+                  className="flex items-center gap-2 text-[10px] sm:text-xs font-mono uppercase tracking-[0.35em] text-muted-foreground mb-3 sm:mb-5"
                 >
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping" />
                   <span>&gt;_ PORTFOLIO OF</span>
                 </motion.div>
 
-                {/* Full Page Monumental Display Typography (HARSH SHARMA) */}
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-4 md:gap-7 overflow-hidden select-none w-full">
-                  {["HARSH", "SHARMA"].map((word, wordIndex) => (
-                    <div key={word} className="overflow-hidden">
-                      <motion.span
-                        initial={{ y: "115%", opacity: 0 }}
-                        animate={{ y: "0%", opacity: 1 }}
-                        transition={{
-                          duration: 0.48,
-                          delay: 0.06 + wordIndex * 0.08,
-                          ease: [0.16, 1, 0.3, 1],
-                        }}
-                        className="inline-block font-[family-name:var(--font-display)] text-5xl xs:text-6xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[11rem] 2xl:text-[13rem] font-black uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-foreground via-foreground/95 to-foreground/70 leading-[0.95] drop-shadow-[0_20px_50px_rgba(0,0,0,0.35)]"
-                      >
-                        {word}
-                      </motion.span>
+                {/* Full Page Monumental Display Typography (HARSH SHARMA) - Guaranteed to fit on all screens */}
+                <div className="flex flex-wrap items-center justify-center gap-x-3 xs:gap-x-4 sm:gap-x-6 md:gap-x-8 gap-y-1 sm:gap-y-2 select-none w-full max-w-full">
+                  {words.map((word) => (
+                    <div key={word.text} className="flex items-center">
+                      {word.text.split("").map((char, charIdx) => {
+                        const overallIndex = word.startIndex + charIdx;
+                        return (
+                          <div key={charIdx} className="overflow-hidden py-1">
+                            <motion.span
+                              initial={{ y: "115%", opacity: 0, rotateZ: -6, filter: "blur(6px)" }}
+                              animate={{ y: "0%", opacity: 1, rotateZ: 0, filter: "blur(0px)" }}
+                              transition={{
+                                duration: 0.48,
+                                delay: 0.06 + overallIndex * 0.038,
+                                ease: [0.22, 1, 0.36, 1],
+                              }}
+                              className="inline-block font-[family-name:var(--font-display)] text-5xl xs:text-6xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[6.6rem] 2xl:text-[7.6rem] font-black uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-foreground via-foreground/95 to-foreground/75 leading-none drop-shadow-[0_12px_36px_rgba(0,0,0,0.35)]"
+                            >
+                              {char}
+                            </motion.span>
+                          </div>
+                        );
+                      })}
                     </div>
                   ))}
                 </div>
+
+                {/* Subtitle Badge: .NET Full Stack Architect */}
+                <motion.div
+                  initial={{ opacity: 0, y: 12, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ delay: 0.58, duration: 0.4 }}
+                  className="mt-3 sm:mt-5 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 sm:px-4 py-1 text-[10px] sm:text-xs font-mono font-medium tracking-wider text-emerald-400 backdrop-blur-sm shadow-xs"
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>FULL STACK .NET ARCHITECT & DEVELOPER</span>
+                </motion.div>
               </motion.div>
             )}
           </div>
