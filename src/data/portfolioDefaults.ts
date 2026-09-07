@@ -103,7 +103,7 @@ export const defaultPortfolioData: PortfolioData = {
     avatarCutoutUrl: "/harsh-3d-model.png",
     badgeColor: "emerald",
     badgePulse: true,
-    bio: "Motivated and detail-oriented .NET Developer passionate about building efficient, scalable and user-focused web applications. I work with C#, .NET, MySQL and Next.js to transform ideas into reliable digital experiences. I enjoy solving problems, learning new technologies and continuously improving the way I build software.",
+    bio: "Passionate .NET Developer building clean, high-performance web applications with C#, .NET, MySQL and Next.js.",
     tagline: "Building. Learning. Improving.",
     stack: [
       { label: "C#", iconName: "Braces" },
@@ -119,9 +119,9 @@ export const defaultPortfolioData: PortfolioData = {
     kicker: "01 — Profile",
     heading: "About me",
     paragraphs: [
-      "I'm a passionate .NET Developer focused on creating clean, efficient and scalable web applications. My development journey revolves around C#, .NET, MySQL and modern frontend technologies such as Next.js.",
-      "I enjoy working on real-world projects, solving technical problems and creating interfaces that are not only functional but also intuitive and engaging.",
-      "I'm continuously learning, experimenting with new technologies and improving my development skills.",
+      "I'm a passionate .NET Developer dedicated to building clean, high-performance and scalable web applications. My core expertise centers on C#, .NET, MySQL and modern frontend technologies like Next.js.",
+      "I thrive on tackling real-world engineering challenges, designing reliable architectures, and crafting user interfaces that are both highly functional and engaging.",
+      "I continuously explore emerging technologies, refine development workflows, and push my capabilities to deliver high-quality software solutions.",
     ],
     stats: [
       { label: ".NET Developer", iconName: "Code2", note: "C# · .NET · MySQL" },

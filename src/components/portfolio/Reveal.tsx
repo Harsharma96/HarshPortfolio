@@ -7,7 +7,7 @@ import type { ReactNode } from "react";
 export function Reveal({
   children,
   delay = 0,
-  y = 28,
+  y = 35,
   scale = 0.98,
   className = "",
 }: {
@@ -22,8 +22,8 @@ export function Reveal({
       className={className}
       initial={{ opacity: 0, y, scale }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, margin: "-15px" }}
-      transition={{ duration: 0.85, delay, ease: [0.22, 1, 0.36, 1] }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.85, delay, ease: [0.16, 1, 0.3, 1] }}
     >
       {children}
     </motion.div>
@@ -66,11 +66,11 @@ export function Card({
           ? {
               y: -5,
               scale: 1.005,
-              transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
+              transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
             }
           : undefined
       }
-      className={`group/card relative rounded-2xl sm:rounded-3xl border transition-all duration-700 ease-out select-none cursor-pointer ${
+      className={`group/card relative rounded-[24px] sm:rounded-[32px] xl:rounded-[38px] border transition-all duration-700 ease-out select-none cursor-pointer ${
         isTransparent
           ? isDark
             ? "bg-black/30 backdrop-blur-xl border-white/40 shadow-[0_25px_60px_rgba(0,0,0,0.5)] text-white"
@@ -92,7 +92,7 @@ export function Card({
     >
       {/* Subtle Slow Ambient Color Aura on Hover / Tap */}
       <div
-        className={`pointer-events-none absolute inset-0 rounded-2xl sm:rounded-3xl transition-opacity duration-700 ease-out ${
+        className={`pointer-events-none absolute inset-0 rounded-[24px] sm:rounded-[32px] xl:rounded-[38px] transition-opacity duration-700 ease-out ${
           isTransparent ? "opacity-100" : "opacity-0"
         } ${
           isDark

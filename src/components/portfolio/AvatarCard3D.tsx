@@ -135,7 +135,7 @@ export function AvatarCard3D({
   return (
     <div
       ref={containerRef}
-      className="group relative h-full w-full max-w-[380px] sm:max-w-none mx-auto min-h-[200px] xs:min-h-[230px] sm:min-h-[480px] lg:min-h-full rounded-2xl sm:rounded-[28px] p-1 sm:p-1.5 transition-all duration-500 select-none cursor-pointer"
+      className="group relative h-full w-full max-w-[380px] sm:max-w-none mx-auto min-h-[200px] xs:min-h-[230px] sm:min-h-[480px] lg:min-h-full rounded-[26px] sm:rounded-[36px] xl:rounded-[42px] p-1 sm:p-1.5 transition-all duration-500 select-none cursor-pointer"
       style={{ perspective: 1200 }}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
@@ -145,7 +145,7 @@ export function AvatarCard3D({
       onTouchEnd={handleTouchEnd}
     >
       {/* Subtle Slow Rotating Silver/White Border Beam (Clean Minimalist Monochrome) */}
-      <div className="pointer-events-none absolute -inset-[1px] rounded-2xl sm:rounded-[30px] overflow-hidden">
+      <div className="pointer-events-none absolute -inset-[1px] rounded-[26px] sm:rounded-[36px] xl:rounded-[42px] overflow-hidden">
         <div className="absolute -inset-[100%] animate-[spin_24s_linear_infinite] opacity-30 group-hover:opacity-60 transition-opacity duration-500">
           <div className="h-full w-full bg-[conic-gradient(from_0deg,transparent_0deg,rgba(255,255,255,0.45)_60deg,transparent_120deg,rgba(255,255,255,0.2)_240deg,transparent_360deg)]" />
         </div>
@@ -153,7 +153,7 @@ export function AvatarCard3D({
 
       {/* 3D Perspective Card Container */}
       <motion.div
-        className={`relative h-full w-full rounded-2xl sm:rounded-[26px] overflow-hidden border flex items-center justify-center p-1.5 sm:p-4 transition-all duration-700 ease-out ${
+        className={`relative h-full w-full rounded-[24px] sm:rounded-[34px] xl:rounded-[40px] overflow-hidden border flex items-center justify-center p-1.5 sm:p-4 transition-all duration-700 ease-out ${
           isHovered
             ? "bg-gradient-to-b from-[#0a0c12]/30 via-[#050609]/20 to-[#020305]/30 backdrop-blur-xl border-white/35 shadow-[0_25px_60px_rgba(0,0,0,0.5)]"
             : "bg-gradient-to-b from-[#0a0c12] via-[#050609] to-[#020305] border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.85)]"

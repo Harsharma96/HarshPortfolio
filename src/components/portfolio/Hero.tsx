@@ -40,7 +40,7 @@ export function Hero() {
     <section id="home" className="scroll-mt-28 pt-20 sm:pt-24 lg:pt-28 xl:pt-32">
       <div className="grid gap-3 sm:gap-5 lg:gap-6 lg:grid-cols-[380px_minmax(0,1.2fr)_290px] xl:grid-cols-[410px_minmax(0,1.25fr)_310px] 2xl:grid-cols-[460px_minmax(0,1.3fr)_340px] lg:min-h-[calc(100vh-140px)] items-stretch">
         {/* Mobile: Side-by-Side 2-column layout (Avatar + Intro), Desktop: Direct grid children via lg:contents */}
-        <div className="grid grid-cols-[135px_1fr] xs:grid-cols-[150px_1fr] sm:grid-cols-2 gap-2.5 sm:gap-4 lg:contents items-stretch">
+        <div className="grid grid-cols-[125px_1fr] xs:grid-cols-[145px_1fr] sm:grid-cols-2 gap-2 xs:gap-2.5 sm:gap-4 lg:contents items-stretch">
           <motion.div
             className="h-full"
             initial={{ opacity: 0, y: 30 }}
@@ -64,13 +64,13 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           >
-            <Card className="flex h-full flex-col justify-between p-3 xs:p-4 sm:p-8 xl:p-12 2xl:p-14 rounded-2xl sm:rounded-3xl">
+            <Card className="flex h-full flex-col justify-between p-3 xs:p-4 sm:p-8 xl:p-12 2xl:p-14 rounded-[26px] sm:rounded-[36px] xl:rounded-[42px]">
               <div>
-                <h1 className="font-[family-name:var(--font-display)] text-xl xs:text-2xl sm:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold leading-[1.08] tracking-tight">
+                <h1 className="font-[family-name:var(--font-display)] text-lg xs:text-2xl sm:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold leading-tight sm:leading-[1.08] tracking-tight">
                   {words.map((w, i) => (
                     <motion.span
                       key={`${w}-${i}`}
-                      className={`mr-1.5 sm:mr-3 inline-block ${
+                      className={`mr-1 sm:mr-3 inline-block ${
                         w.includes("Harsh")
                           ? "bg-gradient-to-r from-foreground via-foreground/90 to-primary/80 bg-clip-text text-transparent"
                           : ""
@@ -86,26 +86,29 @@ export function Hero() {
                   ))}
                 </h1>
 
-                <p className="mt-1 sm:mt-4 font-[family-name:var(--font-display)] text-[9px] xs:text-[10px] sm:text-sm xl:text-base font-bold uppercase tracking-[0.18em] sm:tracking-[0.25em] text-muted-foreground">
-                  {hero.role}
-                </p>
+                <div className="mt-1 sm:mt-3.5">
+                  <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-secondary/80 border border-border/80 text-[8.5px] xs:text-[10px] sm:text-xs xl:text-sm font-mono font-bold uppercase tracking-[0.14em] sm:tracking-[0.24em] text-foreground/90 shadow-2xs">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                    {hero.role}
+                  </span>
+                </div>
 
-                <p className="mt-1.5 sm:mt-5 max-w-xl xl:max-w-2xl 2xl:max-w-3xl text-[10px] xs:text-xs sm:text-sm xl:text-base leading-snug sm:leading-relaxed text-muted-foreground line-clamp-3 sm:line-clamp-none">
+                <p className="mt-1.5 sm:mt-4 max-w-xl xl:max-w-2xl 2xl:max-w-3xl font-[family-name:var(--font-sans)] text-[10.5px] xs:text-xs sm:text-sm xl:text-base leading-snug sm:leading-relaxed text-muted-foreground/90 text-pretty">
                   {hero.bio}
                 </p>
 
-                <p className="mt-1 sm:mt-4 text-[10px] xs:text-xs sm:text-sm xl:text-base font-bold italic line-clamp-1 sm:line-clamp-none">
+                <p className="mt-1 sm:mt-3 font-[family-name:var(--font-sans)] text-[10px] xs:text-xs sm:text-sm xl:text-base font-semibold italic text-foreground/80 tracking-wide">
                   {hero.tagline}
                 </p>
               </div>
 
-              <div className="mt-3 sm:mt-7 xl:mt-9 flex flex-wrap gap-1.5 sm:gap-3">
+              <div className="mt-2.5 sm:mt-7 xl:mt-9 grid grid-cols-2 gap-1.5 sm:flex sm:flex-wrap sm:gap-3">
                 <motion.a
                   whileHover={{ scale: 1.04, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   transition={{ duration: 0.2 }}
                   href="#work"
-                  className="group relative inline-flex items-center justify-center gap-1 sm:gap-2 overflow-hidden rounded-full bg-primary px-3 py-1.5 xs:px-3.5 xs:py-2 sm:px-6 sm:py-3.5 xl:px-8 xl:py-4 text-[10px] xs:text-xs xl:text-sm font-bold uppercase tracking-wider sm:tracking-[0.18em] text-primary-foreground shadow-md transition-shadow hover:shadow-lg flex-1 sm:flex-initial"
+                  className="group relative inline-flex items-center justify-center gap-1 sm:gap-2 overflow-hidden rounded-full bg-primary px-2.5 py-1.5 xs:px-3.5 xs:py-2 sm:px-6 sm:py-3.5 xl:px-8 xl:py-4 text-[10px] xs:text-xs xl:text-sm font-bold uppercase tracking-wider sm:tracking-[0.18em] text-primary-foreground shadow-md transition-shadow hover:shadow-lg w-full sm:w-auto"
                 >
                   <span className="relative z-10 flex items-center gap-1 sm:gap-2">
                     Work
@@ -118,7 +121,7 @@ export function Hero() {
                   whileTap={{ scale: 0.95 }}
                   transition={{ duration: 0.2 }}
                   onClick={() => setResumeOpen(true)}
-                  className="group inline-flex items-center justify-center gap-1 sm:gap-2 rounded-full border border-border bg-card/60 px-3 py-1.5 xs:px-3.5 xs:py-2 sm:px-6 sm:py-3.5 xl:px-8 xl:py-4 text-[10px] xs:text-xs xl:text-sm font-bold uppercase tracking-wider sm:tracking-[0.18em] text-foreground transition-all duration-300 hover:border-primary/50 hover:bg-secondary hover:shadow-md cursor-pointer flex-1 sm:flex-initial"
+                  className="group inline-flex items-center justify-center gap-1 sm:gap-2 rounded-full border border-border bg-card/80 px-2 py-1.5 xs:px-3 xs:py-2 sm:px-6 sm:py-3.5 xl:px-8 xl:py-4 text-[10px] xs:text-xs xl:text-sm font-bold uppercase tracking-wider sm:tracking-[0.18em] text-foreground transition-all duration-300 hover:border-primary/50 hover:bg-secondary hover:shadow-md cursor-pointer w-full sm:w-auto"
                 >
                   <FileText className="h-3 w-3 sm:h-4 sm:w-4 text-primary transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6" aria-hidden />
                   <span>Resume</span>
@@ -135,7 +138,7 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
         >
-          <Card className="flex h-full flex-col justify-between p-3.5 sm:p-6 xl:p-8 rounded-2xl sm:rounded-3xl">
+          <Card className="flex h-full flex-col justify-between p-3.5 sm:p-6 xl:p-8 rounded-[26px] sm:rounded-[36px] xl:rounded-[42px]">
             <div>
               <div className="flex items-center justify-between">
                 <Label>Tech stack</Label>

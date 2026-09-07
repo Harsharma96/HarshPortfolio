@@ -52,6 +52,11 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
               parsed.hero?.avatarCutoutUrl === "/harsh-3d-character.png"
                 ? defaultPortfolioData.hero.avatarCutoutUrl
                 : parsed.hero.avatarCutoutUrl,
+            bio:
+              !parsed.hero?.bio ||
+              parsed.hero?.bio.includes("Motivated and detail-oriented .NET Developer passionate about building")
+                ? defaultPortfolioData.hero.bio
+                : parsed.hero.bio,
           },
           about: { ...defaultPortfolioData.about, ...parsed.about },
           skills: { ...defaultPortfolioData.skills, ...parsed.skills },
