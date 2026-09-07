@@ -7,22 +7,30 @@ export function Preloader() {
   const [progress, setProgress] = useState(0);
   const [phase, setPhase] = useState<"counter" | "name" | "exit" | "done">("counter");
 
+  const skipPreloader = () => {
+    document.body.style.overflow = "unset";
+    setPhase("done");
+  };
+
   useEffect(() => {
     // Lock scroll during preloader
     document.body.style.overflow = "hidden";
 
-    // Progress counter simulation (0 to 100%) - Slower, cinematic pacing
+    // Fast, responsive progress counter simulation (0 to 100%) in 650ms
     const startTime = performance.now();
-    const duration = 2400; // 2.4s for smooth, deliberate counter
+    const duration = 650;
 
     let frameId: number;
+    let t1: ReturnType<typeof setTimeout>;
+    let t2: ReturnType<typeof setTimeout>;
+    let t3: ReturnType<typeof setTimeout>;
 
     const tick = (now: number) => {
       const elapsed = now - startTime;
       const t = Math.min(elapsed / duration, 1);
 
-      // Smooth cubic ease: gradual start, steady climb, gentle deceleration at 100
-      const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      // Snappy cubic ease out
+      const eased = 1 - Math.pow(1 - t, 3);
       const currentVal = Math.min(Math.round(eased * 100), 100);
 
       setProgress(currentVal);
@@ -31,21 +39,21 @@ export function Preloader() {
         frameId = requestAnimationFrame(tick);
       } else {
         setProgress(100);
-        // Hold 100% briefly, then smoothly transition to "HARSH SHARMA"
-        setTimeout(() => {
+        // Swift transition to "HARSH SHARMA"
+        t1 = setTimeout(() => {
           setPhase("name");
-        }, 350);
+        }, 120);
 
-        // Display "HARSH SHARMA" proudly for 2.2 seconds before exit
-        setTimeout(() => {
+        // Display "HARSH SHARMA" punchily for 750ms before fast exit
+        t2 = setTimeout(() => {
           setPhase("exit");
-        }, 2550);
+        }, 900);
 
         // Complete transition and unlock body scroll
-        setTimeout(() => {
+        t3 = setTimeout(() => {
           setPhase("done");
           document.body.style.overflow = "unset";
-        }, 3650);
+        }, 1350);
       }
     };
 
@@ -53,6 +61,9 @@ export function Preloader() {
 
     return () => {
       cancelAnimationFrame(frameId);
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
       document.body.style.overflow = "unset";
     };
   }, []);
@@ -66,10 +77,12 @@ export function Preloader() {
           animate={phase === "exit" ? { y: "-100%" } : { y: 0 }}
           exit={{ y: "-100%" }}
           transition={{
-            duration: 1.1,
-            ease: [0.85, 0, 0.15, 1],
+            duration: 0.45,
+            ease: [0.22, 1, 0.36, 1],
           }}
-          className="fixed inset-0 z-[99999] flex flex-col justify-between bg-background text-foreground select-none overflow-hidden p-6 sm:p-10"
+          onClick={skipPreloader}
+          title="Click to enter portfolio"
+          className="fixed inset-0 z-[99999] flex flex-col justify-between bg-background text-foreground select-none overflow-hidden p-6 sm:p-10 cursor-pointer"
         >
           {/* Subtle Ambient Background Glow */}
           <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
@@ -168,11 +181,11 @@ export function Preloader() {
                   {["HARSH", "SHARMA"].map((word, wordIndex) => (
                     <div key={word} className="overflow-hidden">
                       <motion.span
-                        initial={{ y: "115%", opacity: 0, rotateX: 30 }}
-                        animate={{ y: "0%", opacity: 1, rotateX: 0 }}
+                        initial={{ y: "115%", opacity: 0 }}
+                        animate={{ y: "0%", opacity: 1 }}
                         transition={{
-                          duration: 0.95,
-                          delay: 0.18 + wordIndex * 0.15,
+                          duration: 0.48,
+                          delay: 0.06 + wordIndex * 0.08,
                           ease: [0.16, 1, 0.3, 1],
                         }}
                         className="inline-block font-[family-name:var(--font-display)] text-5xl xs:text-6xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[11rem] 2xl:text-[13rem] font-black uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-foreground via-foreground/95 to-foreground/70 leading-[0.95] drop-shadow-[0_20px_50px_rgba(0,0,0,0.35)]"
